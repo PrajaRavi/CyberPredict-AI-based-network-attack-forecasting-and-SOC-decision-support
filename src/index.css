@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/*  CyberPredict design tokens — SOC-grade dark theme                  */
+/*  Display: Space Grotesk · Body: IBM Plex Sans · Data: IBM Plex Mono  */
+/* ------------------------------------------------------------------ */
+@theme {
+  --font-display: "Space Grotesk", "IBM Plex Sans", ui-sans-serif, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* Surfaces — near-black with a deep-navy cast */
+  --color-ink-950: #05080f;
+  --color-ink-900: #070c17;
+  --color-ink-850: #0a1120;
+  --color-ink-800: #0d1626;
+  --color-ink-750: #111c30;
+  --color-ink-700: #16233b;
+
+  /* Borders */
+  --color-line: #142138;
+  --color-line-bright: #1f3357;
+
+  /* Text — cool off-whites */
+  --color-mist-50: #ecf3fc;
+  --color-mist-100: #d9e4f2;
+  --color-mist-300: #a9bcd6;
+  --color-mist-400: #8298b8;
+  /* mist-500/600 lifted one step for WCAG-friendly contrast on ink surfaces */
+  --color-mist-500: #7b8fb0;
+  --color-mist-600: #64789a;
+
+  /* Primary AI / data accent — signal cyan */
+  --color-pulse-300: #86ecff;
+  --color-pulse-400: #45ddf8;
+  --color-pulse-500: #1cc5ea;
+  --color-pulse-600: #10a3c7;
+  --color-pulse-700: #0c81a0;
+
+  /* Secondary data blue */
+  --color-signal-400: #6fa9ff;
+  --color-signal-500: #4d8df7;
+  --color-signal-600: #3a72d8;
+
+  /* Semantic risk states */
+  --color-safe-400: #43e59c;
+  --color-safe-500: #22cc82;
+  --color-safe-600: #17a568;
+
+  --color-warn-400: #ffc65c;
+  --color-warn-500: #f7ac2b;
+  --color-warn-600: #d18f14;
+
+  --color-crit-400: #ff7285;
+  --color-crit-500: #f8495f;
+  --color-crit-600: #d63049;
+
+  /* Motion — deliberately restrained */
+  --animate-shimmer: shimmer 2.6s ease-in-out infinite;
+  --animate-enter: enter 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes shimmer {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* Layered SOC-grid backdrop */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--color-pulse-500) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-pulse-500) 4%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* Faint radar wash along the top edge */
+@utility bg-glow {
+  background: radial-gradient(
+    60% 100% at 50% 0%,
+    color-mix(in srgb, var(--color-pulse-500) 7%, transparent),
+    transparent 72%
+  );
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--color-ink-950);
+    color: var(--color-mist-100);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-pulse-500) 32%, transparent);
+    color: var(--color-mist-50);
+  }
+
+  :focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--color-pulse-500) 55%, transparent);
+    outline-offset: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-ink-700);
+    border-radius: 8px;
+    border: 2px solid var(--color-ink-950);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-line-bright);
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-ink-700) transparent;
+  }
+}
+
+/* Respect OS-level motion preferences — SOC consoles run 24/7. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
