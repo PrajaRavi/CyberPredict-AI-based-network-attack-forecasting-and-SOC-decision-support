@@ -129,7 +129,7 @@ export function RiskTimeline({
       </div>
 
       {/* Main Area Chart */}
-      <div className="h-[220px] sm:h-[280px] lg:h-[320px] w-full pt-2">
+      <div className="h-[220px] sm:h-[280px] lg:h-80 w-full pt-2">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={points as TimelinePoint[]}

@@ -4,10 +4,10 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
-  Filter,
+  // Filter,
   Radar,
   Search,
-  SlidersHorizontal,
+  // SlidersHorizontal,
 } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -189,7 +189,7 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
   return (
     <section className="rounded-3xl border border-slate-200/70 bg-white shadow-[0_4px_24px_-4px_rgba(20,30,55,0.05)] transition-all duration-300 hover:shadow-[0_12px_32px_-6px_rgba(20,30,55,0.09)] overflow-hidden">
       {/* Header */}
-      <header className="flex min-h-14 flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 via-white to-slate-50/40 px-6 py-3">
+      <header className="flex min-h-14 flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-linear-to-r from-slate-50/80 via-white to-slate-50/40 px-6 py-3">
         <div className="flex items-center gap-2.5">
           <span className="size-2 rounded-full bg-blue-600 shadow-xs shadow-blue-500/50" />
           <h2 className="font-display text-[15px] font-bold uppercase tracking-wider text-slate-800">

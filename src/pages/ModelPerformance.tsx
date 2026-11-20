@@ -39,7 +39,7 @@ export default function ModelPerformancePage() {
       />
 
       {/* Demo-data disclosure alert card */}
-      <div className="flex items-start gap-3 rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-white p-4 shadow-2xs">
+      <div className="flex items-start gap-3 rounded-2xl border border-blue-200 bg-linear-to-r from-blue-50/70 via-indigo-50/40 to-white p-4 shadow-2xs">
         <FlaskConical size={18} className="mt-0.5 shrink-0 text-blue-600" aria-hidden />
         <div className="min-w-0 flex-1">
           <div className="font-mono text-[10.5px] font-bold uppercase tracking-wider text-blue-700">
@@ -59,7 +59,7 @@ export default function ModelPerformancePage() {
           {alarmTimes.map((t) => (
             <AlarmTimeCard key={t.id} data={t} />
           ))}
-          <article className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50/80 via-teal-50/50 to-white p-5 text-center shadow-xs">
+          <article className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-emerald-200 bg-linear-to-br from-emerald-50/80 via-teal-50/50 to-white p-5 text-center shadow-xs">
             <div className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-700">
               Mean Early Warning Gain
             </div>

@@ -21,7 +21,7 @@ export function RiskScoreCard({ score }: { score: RiskScoreData }) {
   const rising = score.delta >= 0;
 
   return (
-    <article className="group relative flex flex-col justify-between rounded-3xl bg-gradient-to-br from-[#10e5be] via-[#0ccda9] to-[#05b293] p-4 sm:p-5 lg:p-6 text-white shadow-[0_12px_28px_-6px_rgba(16,229,190,0.38)] transition-all duration-300 hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-[0_20px_36px_-6px_rgba(16,229,190,0.5)] cursor-pointer overflow-hidden">
+    <article className="group relative flex flex-col justify-between rounded-3xl bg-linear-to-br from-[#10e5be] via-[#0ccda9] to-[#05b293] p-4 sm:p-5 lg:p-6 text-white shadow-[0_12px_28px_-6px_rgba(16,229,190,0.38)] transition-all duration-300 hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-[0_20px_36px_-6px_rgba(16,229,190,0.5)] cursor-pointer overflow-hidden">
       {/* Ambient decorative glow inside card */}
       <div className="pointer-events-none absolute -right-8 -top-8 size-32 rounded-full bg-white/10 blur-xl transition-all duration-500 group-hover:scale-125" />
 

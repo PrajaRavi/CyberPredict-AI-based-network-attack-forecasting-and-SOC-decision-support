@@ -3,7 +3,7 @@ import {
   HelpCircle,
   LogOut,
   Settings,
-  Shield,
+  // Shield,
   Sparkles,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
@@ -31,9 +31,9 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
     >
       {/* Brand Header */}
       <div className="flex h-20 shrink-0 items-center gap-3.5 px-6 border-b border-slate-100">
-        <div className="relative grid size-10 place-items-center rounded-2xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 p-0.5 shadow-md shadow-blue-500/20">
+        <div className="relative grid size-10 place-items-center rounded-2xl bg-linear-to-tr from-cyan-400 via-blue-500 to-indigo-600 p-0.5 shadow-md shadow-blue-500/20">
           <div className="grid size-full place-items-center rounded-[14px] bg-white">
-            <div className="size-5 rounded-full bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 flex items-center justify-center">
+            <div className="size-5 rounded-full bg-linear-to-tr from-cyan-400 via-blue-500 to-indigo-600 flex items-center justify-center">
               <div className="size-2 rounded-full bg-white" />
             </div>
           </div>
@@ -130,7 +130,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
         </div>
 
         {/* AI Model Badge Card */}
-        <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50/70 via-indigo-50/50 to-white p-4 shadow-2xs">
+        <div className="rounded-2xl border border-blue-100 bg-linear-to-br from-blue-50/70 via-indigo-50/50 to-white p-4 shadow-2xs">
           <div className="flex items-center gap-2 text-blue-600">
             <Sparkles size={16} className="shrink-0" />
             <span className="font-display text-[12px] font-bold uppercase tracking-wider">
@@ -153,7 +153,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
       {/* Footer User & Status */}
       <div className="shrink-0 border-t border-slate-100 p-4">
         <div className="flex items-center gap-3 rounded-2xl p-2 transition-colors hover:bg-slate-50">
-          <div className="grid size-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 font-bold text-xs text-white shadow-xs">
+          <div className="grid size-9 shrink-0 place-items-center rounded-full bg-linear-to-br from-blue-500 to-indigo-600 font-bold text-xs text-white shadow-xs">
             AR
           </div>
           <div className="min-w-0 flex-1">

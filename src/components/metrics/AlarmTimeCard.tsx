@@ -13,15 +13,15 @@ export interface AlarmTimeData {
 const TONE = {
   pulse: {
     text: "text-blue-600",
-    bar: "bg-gradient-to-r from-blue-500 to-indigo-600",
+    bar: "bg-linear-to-r from-blue-500 to-indigo-600",
     border: "border-blue-100",
-    bg: "bg-gradient-to-br from-blue-50/40 to-white",
+    bg: "bg-linear-to-br from-blue-50/40 to-white",
   },
   warn: {
     text: "text-amber-600",
-    bar: "bg-gradient-to-r from-amber-500 to-orange-500",
+    bar: "bg-linear-to-r from-amber-500 to-orange-500",
     border: "border-amber-100",
-    bg: "bg-gradient-to-br from-amber-50/40 to-white",
+    bg: "bg-linear-to-br from-amber-50/40 to-white",
   },
 } as const;
 

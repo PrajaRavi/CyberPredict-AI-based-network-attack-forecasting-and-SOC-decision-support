@@ -15,7 +15,7 @@ export function PageHeader({ icon: Icon, eyebrow, title, description, aside }: P
   return (
     <header className="flex flex-col gap-3 sm:gap-4 pb-1 sm:pb-2 md:flex-row md:items-center md:justify-between">
       <div className="flex items-start gap-3 sm:gap-4 min-w-0">
-        <div className="grid size-10 sm:size-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md shadow-indigo-500/25 transition-transform duration-300 hover:scale-105">
+        <div className="grid size-10 sm:size-12 shrink-0 place-items-center rounded-2xl bg-linear-to-br from-blue-500 to-indigo-600 text-white shadow-md shadow-indigo-500/25 transition-transform duration-300 hover:scale-105">
           <Icon size={20} className="sm:size-[22px]" strokeWidth={2.2} aria-hidden />
         </div>
         <div className="min-w-0 flex-1">

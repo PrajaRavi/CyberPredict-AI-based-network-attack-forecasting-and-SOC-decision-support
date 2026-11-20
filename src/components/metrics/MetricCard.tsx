@@ -58,7 +58,7 @@ export function MetricCard({ metric, index = 0 }: { metric: MetricCardData; inde
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
           <div
             className={cn(
-              "h-full rounded-full bg-gradient-to-r transition-all duration-700 ease-out",
+              "h-full rounded-full bg-linear-to-r transition-all duration-700 ease-out",
               TONE_BAR[metric.tone]
             )}
             style={{ width: `${width}%` }}
