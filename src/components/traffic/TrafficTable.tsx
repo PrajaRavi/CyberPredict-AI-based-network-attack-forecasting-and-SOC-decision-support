@@ -4,12 +4,14 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
+  Filter,
   Radar,
   Search,
+  SlidersHorizontal,
 } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { cn } from "../../utils/cn";
+import { cn } from "../../lib/utils";
 import { RiskLevelBadge } from "../dashboard/RiskLevelBadge";
 import { StatusBadge } from "../ui/Badge";
 
@@ -76,16 +78,16 @@ const PROTOCOLS = ["ALL", "TCP", "UDP", "ICMP"] as const;
 const RISK_OPTIONS = ["ALL", "CRITICAL", "HIGH", "MEDIUM", "LOW"] as const;
 
 const PROTO_CHIP: Record<TrafficFlow["protocol"], string> = {
-  TCP: "border-pulse-500/25 bg-pulse-500/[0.08] text-pulse-400",
-  UDP: "border-signal-500/30 bg-signal-500/10 text-signal-400",
-  ICMP: "border-line-bright bg-ink-750/60 text-mist-400",
+  TCP: "border-blue-200 bg-blue-50 text-blue-700 font-semibold",
+  UDP: "border-purple-200 bg-purple-50 text-purple-700 font-semibold",
+  ICMP: "border-slate-200 bg-slate-100 text-slate-700 font-semibold",
 };
 
 const RISK_BAR: Record<FlowRiskLevel, string> = {
-  LOW: "bg-safe-500",
-  MEDIUM: "bg-warn-500",
-  HIGH: "bg-crit-500",
-  CRITICAL: "bg-crit-400",
+  LOW: "bg-emerald-500",
+  MEDIUM: "bg-amber-500",
+  HIGH: "bg-rose-500",
+  CRITICAL: "bg-rose-600",
 };
 
 const fmt = (n: number) => n.toLocaleString("en-US");
@@ -94,7 +96,6 @@ const fmtPps = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : n.toFix
 const fmtBps = (n: number) =>
   n >= 1_000_000 ? `${(n / 1_000_000).toFixed(2)} MB/s` : n >= 1000 ? `${(n / 1000).toFixed(1)} KB/s` : `${n} B/s`;
 
-/* Sort IPs as 32-bit integers so octets order correctly. */
 const ipToNumber = (ip: string) => ip.split(".").reduce((acc, o) => acc * 256 + Number(o), 0);
 
 const sortValue = (f: TrafficFlow, key: SortKey): number | string => {
@@ -146,7 +147,7 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
           [f.id, f.srcIp, f.dstIp, String(f.srcPort), String(f.dstPort), f.protocol]
             .join(" ")
             .toLowerCase()
-            .includes(q)),
+            .includes(q))
     );
   }, [flows, query, protocol, riskFilter]);
 
@@ -186,30 +187,33 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
   const to = Math.min(safePage * PAGE_SIZE, sorted.length);
 
   return (
-    <section className="rounded-lg border border-line bg-ink-800/60">
-      {/* Card header */}
-      <header className="flex min-h-11 flex-wrap items-center gap-2.5 border-b border-line px-4 py-2">
-        <span aria-hidden className="size-1.5 shrink-0 rounded-xs bg-pulse-500/80" />
-        <h2 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-mist-400">
-          Network flows
-        </h2>
-        <span className="hidden font-mono text-[10px] tracking-wider text-mist-600 sm:inline">
-          {"//"} Live capture · edge + core
-        </span>
-        <div className="ml-auto flex items-center gap-2">
-          <span className="font-mono text-[10px] tabular-nums text-mist-500">
+    <section className="rounded-3xl border border-slate-200/70 bg-white shadow-[0_4px_24px_-4px_rgba(20,30,55,0.05)] transition-all duration-300 hover:shadow-[0_12px_32px_-6px_rgba(20,30,55,0.09)] overflow-hidden">
+      {/* Header */}
+      <header className="flex min-h-14 flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 via-white to-slate-50/40 px-6 py-3">
+        <div className="flex items-center gap-2.5">
+          <span className="size-2 rounded-full bg-blue-600 shadow-xs shadow-blue-500/50" />
+          <h2 className="font-display text-[15px] font-bold uppercase tracking-wider text-slate-800">
+            Network Flows
+          </h2>
+          <span className="hidden font-mono text-xs text-slate-400 sm:inline">
+            {"//"} Live Capture · Edge + Core Interfaces
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-xs font-semibold text-slate-500">
             {sorted.length} / {flows.length} flows
           </span>
-          <StatusBadge tone="pulse" pulse>
-            Streaming
+          <StatusBadge tone="safe" pulse>
+            Streaming Live
           </StatusBadge>
         </div>
       </header>
 
-      {/* Toolbar: search + protocol chips + risk filter */}
-      <div className="flex flex-wrap items-center gap-2.5 border-b border-line px-4 py-3">
-        <label className="relative min-w-[200px] flex-1 sm:max-w-xs">
-          <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-mist-500" />
+      {/* Toolbar */}
+      <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 bg-white px-6 py-4">
+        {/* Search input pill */}
+        <label className="relative min-w-[220px] flex-1 sm:max-w-xs">
+          <Search size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={query}
@@ -218,10 +222,11 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
               setPage(1);
             }}
             placeholder="Filter by IP, port, protocol…"
-            className="h-9 w-full rounded-md border border-line bg-ink-850 pl-9 pr-3 font-mono text-[12px] text-mist-100 placeholder:font-sans placeholder:text-mist-600 transition-colors focus:border-pulse-500/50 focus:outline-none"
+            className="h-10 w-full rounded-full border border-slate-200/80 bg-slate-50/70 pl-10 pr-4 font-sans text-xs text-slate-800 placeholder:text-slate-400 transition-colors focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
           />
         </label>
 
+        {/* Protocol chips */}
         <div className="flex items-center gap-1.5" role="group" aria-label="Protocol filter">
           {PROTOCOLS.map((p) => (
             <button
@@ -232,10 +237,10 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
                 setPage(1);
               }}
               className={cn(
-                "h-9 rounded-md border px-3 font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] transition-colors duration-150",
+                "h-9 rounded-full px-3.5 font-mono text-xs font-bold transition-all duration-150 cursor-pointer",
                 protocol === p
-                  ? "border-pulse-500/40 bg-pulse-500/10 text-pulse-300"
-                  : "border-line text-mist-400 hover:border-line-bright hover:text-mist-100",
+                  ? "bg-blue-600 text-white shadow-xs shadow-blue-500/25"
+                  : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
               )}
             >
               {p}
@@ -243,9 +248,10 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
           ))}
         </div>
 
-        <label className="ml-auto flex items-center gap-2">
-          <span className="hidden font-mono text-[9px] uppercase tracking-[0.16em] text-mist-600 sm:inline">
-            Risk
+        {/* Risk filter */}
+        <div className="ml-auto flex items-center gap-2">
+          <span className="hidden font-sans text-xs font-semibold text-slate-500 sm:inline">
+            Risk:
           </span>
           <select
             value={riskFilter}
@@ -254,7 +260,7 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
               setPage(1);
             }}
             aria-label="Risk level filter"
-            className="h-9 cursor-pointer rounded-md border border-line bg-ink-850 px-3 font-mono text-[10.5px] uppercase tracking-[0.12em] text-mist-300 transition-colors focus:border-pulse-500/50 focus:outline-none"
+            className="h-9 cursor-pointer rounded-xl border border-slate-200 bg-white px-3 font-mono text-xs font-bold uppercase tracking-wider text-slate-700 shadow-2xs hover:bg-slate-50 focus:border-blue-500 focus:outline-none"
           >
             {RISK_OPTIONS.map((r) => (
               <option key={r} value={r}>
@@ -262,65 +268,61 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
               </option>
             ))}
           </select>
-        </label>
+        </div>
       </div>
 
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full min-w-[1060px] border-collapse text-left">
-          <caption className="sr-only">
-            Captured network flows — searchable, filterable, sortable and paginated; expand a row for
-            anomaly context
-          </caption>
           <thead>
-            <tr className="border-b border-line bg-ink-850/60">
-              <th className="w-9 px-2 py-2.5" aria-label="Expand row" />
+            <tr className="border-b border-slate-100 bg-slate-50/60">
+              <th className="w-10 px-3 py-3" aria-label="Expand row" />
               {COLUMNS.map((col) => {
                 const active = sortKey === col.key;
                 return (
                   <th
                     key={col.key}
                     aria-sort={active ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
-                    className={cn("whitespace-nowrap px-3 py-2.5", col.align === "right" && "text-right", col.className)}
+                    className={cn("whitespace-nowrap px-3.5 py-3", col.align === "right" && "text-right", col.className)}
                   >
                     <button
                       type="button"
                       onClick={() => onSort(col.key)}
                       className={cn(
-                        "inline-flex items-center gap-1 font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] transition-colors duration-150",
-                        active ? "text-pulse-300" : "text-mist-500 hover:text-mist-200",
+                        "inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer",
+                        active ? "text-blue-600 font-extrabold" : "text-slate-400 hover:text-slate-700"
                       )}
                     >
                       {col.label}
                       {active ? (
                         sortDir === "asc" ? (
-                          <ArrowUp size={11} aria-hidden />
+                          <ArrowUp size={12} strokeWidth={2.5} />
                         ) : (
-                          <ArrowDown size={11} aria-hidden />
+                          <ArrowDown size={12} strokeWidth={2.5} />
                         )
                       ) : (
-                        <ArrowUpDown size={11} className="opacity-40" aria-hidden />
+                        <ArrowUpDown size={11} className="opacity-40" />
                       )}
                     </button>
                   </th>
                 );
               })}
-              <th className="whitespace-nowrap px-3 py-2.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] text-mist-500">
+              <th className="whitespace-nowrap px-3.5 py-3 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 Risk
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-slate-100/70 text-xs">
             {pageRows.length === 0 && (
               <tr>
-                <td colSpan={13} className="px-4 py-14">
+                <td colSpan={13} className="px-4 py-16">
                   <div className="flex flex-col items-center gap-3 text-center">
-                    <Radar size={22} className="text-mist-600" aria-hidden />
-                    <p className="text-[13px] text-mist-400">No flows match the current filters.</p>
+                    <Radar size={28} className="text-slate-300" />
+                    <p className="text-sm font-semibold text-slate-600">No flows match the current filters.</p>
                     <button
                       type="button"
                       onClick={resetFilters}
-                      className="rounded-md border border-pulse-500/40 bg-pulse-500/10 px-3 py-1.5 text-[12px] font-medium text-pulse-300 transition-colors hover:bg-pulse-500/20"
+                      className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-700 transition-colors cursor-pointer"
                     >
                       Clear filters
                     </button>
@@ -335,11 +337,11 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
                   <tr
                     onClick={() => setExpandedId(expanded ? null : flow.id)}
                     className={cn(
-                      "cursor-pointer border-b border-line/60 transition-colors duration-150",
-                      expanded ? "bg-pulse-500/5" : "hover:bg-white/2",
+                      "cursor-pointer transition-colors duration-150",
+                      expanded ? "bg-blue-50/40" : "hover:bg-slate-50/80"
                     )}
                   >
-                    <td className="px-2 py-2.5 text-center">
+                    <td className="px-3 py-3 text-center">
                       <button
                         type="button"
                         aria-label={expanded ? "Collapse flow details" : "Expand flow details"}
@@ -347,130 +349,131 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
                           e.stopPropagation();
                           setExpandedId(expanded ? null : flow.id);
                         }}
-                        className="grid size-6 place-items-center rounded text-mist-500 transition-all duration-200 hover:bg-white/4 hover:text-pulse-400"
+                        className="grid size-6 place-items-center rounded-lg text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-all cursor-pointer"
                       >
-                        <ChevronRight size={14} className={cn("transition-transform duration-200", expanded && "rotate-90")} />
+                        <ChevronRight
+                          size={14}
+                          className={cn("transition-transform duration-200", expanded && "rotate-90")}
+                        />
                       </button>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-2.5 font-mono text-[11px] tabular-nums text-mist-300">
+                    <td className="whitespace-nowrap px-3.5 py-3 font-mono text-[11px] font-medium text-slate-500">
                       {flow.timestamp}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-2.5 font-mono text-[11.5px] text-mist-100">{flow.srcIp}</td>
-                    <td className="whitespace-nowrap px-3 py-2.5 font-mono text-[11.5px] text-mist-300">{flow.dstIp}</td>
-                    <td className="whitespace-nowrap px-3 py-2.5 text-right font-mono text-[11px] tabular-nums text-mist-400">
+                    <td className="whitespace-nowrap px-3.5 py-3 font-mono text-xs font-bold text-slate-900">
+                      {flow.srcIp}
+                    </td>
+                    <td className="whitespace-nowrap px-3.5 py-3 font-mono text-xs font-medium text-slate-700">
+                      {flow.dstIp}
+                    </td>
+                    <td className="whitespace-nowrap px-3.5 py-3 text-right font-mono text-xs text-slate-500">
                       {portLabel(flow, "src")}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-2.5 text-right font-mono text-[11px] tabular-nums text-mist-400">
+                    <td className="whitespace-nowrap px-3.5 py-3 text-right font-mono text-xs text-slate-500">
                       {portLabel(flow, "dst")}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-2.5">
-                      <span
-                        className={cn(
-                          "rounded border px-1.5 py-0.5 font-mono text-[9.5px] font-medium uppercase tracking-widest",
-                          PROTO_CHIP[flow.protocol],
-                        )}
-                      >
+                    <td className="whitespace-nowrap px-3.5 py-3">
+                      <span className={cn("rounded-md border px-2 py-0.5 font-mono text-[10px]", PROTO_CHIP[flow.protocol])}>
                         {flow.protocol}
                       </span>
                     </td>
-                    <td className="hidden whitespace-nowrap px-3 py-2.5 text-right font-mono text-[11px] tabular-nums text-mist-300 md:table-cell">
+                    <td className="hidden whitespace-nowrap px-3.5 py-3 text-right font-mono text-xs text-slate-600 md:table-cell">
                       {fmtDuration(flow.durationSec)}
                     </td>
-                    <td className="hidden whitespace-nowrap px-3 py-2.5 text-right font-mono text-[11px] tabular-nums text-mist-300 lg:table-cell">
+                    <td className="hidden whitespace-nowrap px-3.5 py-3 text-right font-mono text-xs text-slate-600 lg:table-cell">
                       {fmt(flow.packets)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-2.5 text-right font-mono text-[11px] tabular-nums text-mist-300">
+                    <td className="whitespace-nowrap px-3.5 py-3 text-right font-mono text-xs font-medium text-slate-800">
                       {fmt(flow.bytes)}
                     </td>
-                    <td className="hidden whitespace-nowrap px-3 py-2.5 text-right font-mono text-[11px] tabular-nums text-mist-300 xl:table-cell">
+                    <td className="hidden whitespace-nowrap px-3.5 py-3 text-right font-mono text-xs text-slate-600 xl:table-cell">
                       {fmtPps(flow.pps)}
                     </td>
-                    <td className="hidden whitespace-nowrap px-3 py-2.5 text-right font-mono text-[11px] tabular-nums text-mist-300 xl:table-cell">
+                    <td className="hidden whitespace-nowrap px-3.5 py-3 text-right font-mono text-xs text-slate-600 xl:table-cell">
                       {fmtBps(flow.bps)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-2.5">
+                    <td className="whitespace-nowrap px-3.5 py-3">
                       <RiskLevelBadge level={flow.risk.level} size="sm" />
                     </td>
                   </tr>
 
-                  {/* Expanded flow details */}
+                  {/* Expanded Row */}
                   {expanded && (
-                    <tr className="border-b border-line/60 bg-ink-850/50">
-                      <td colSpan={13} className="px-4 py-0">
-                        <div className="animate-enter py-4 pl-2 pr-1 sm:pl-9">
-                          <div className="grid gap-4 lg:grid-cols-3">
-                            <div className="rounded-md border border-line bg-ink-850/70 p-3.5">
-                              <div className="font-mono text-[9px] uppercase tracking-[0.16em] text-mist-600">
-                                Risk assessment
-                              </div>
-                              <div className="mt-2.5 flex items-center gap-2.5">
-                                <RiskLevelBadge level={flow.risk.level} size="sm" />
-                                <span className="font-mono text-[11px] tabular-nums text-mist-300">
-                                  {flow.risk.score} / 100
-                                </span>
-                              </div>
-                              <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-ink-700">
-                                <div
-                                  className={cn("h-full rounded-full transition-[width] duration-500", RISK_BAR[flow.risk.level])}
-                                  style={{ width: `${flow.risk.score}%` }}
-                                />
-                              </div>
-                              <dl className="mt-3.5 space-y-1.5 font-mono text-[10.5px]">
-                                <div className="flex justify-between gap-3">
-                                  <dt className="uppercase tracking-[0.12em] text-mist-600">Origin</dt>
-                                  <dd className="text-right text-mist-300">{flow.origin}</dd>
-                                </div>
-                                <div className="flex justify-between gap-3">
-                                  <dt className="uppercase tracking-[0.12em] text-mist-600">Interface</dt>
-                                  <dd className="text-right text-mist-300">{flow.iface}</dd>
-                                </div>
-                                <div className="flex justify-between gap-3">
-                                  <dt className="uppercase tracking-[0.12em] text-mist-600">Detector</dt>
-                                  <dd className="text-right text-mist-300">{flow.detector}</dd>
-                                </div>
-                              </dl>
+                    <tr className="border-b border-slate-100 bg-blue-50/20">
+                      <td colSpan={13} className="px-6 py-5">
+                        <div className="grid gap-5 lg:grid-cols-3 animate-enter">
+                          <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+                            <div className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                              Risk Assessment
                             </div>
-
-                            <div className="rounded-md border border-line bg-ink-850/70 p-3.5 lg:col-span-2">
-                              <div className="font-mono text-[9px] uppercase tracking-[0.16em] text-mist-600">
-                                Anomaly indicators
+                            <div className="mt-2.5 flex items-center justify-between">
+                              <RiskLevelBadge level={flow.risk.level} size="sm" />
+                              <span className="font-display font-extrabold text-base text-slate-900">
+                                {flow.risk.score} / 100
+                              </span>
+                            </div>
+                            <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-slate-100">
+                              <div
+                                className={cn("h-full rounded-full transition-all duration-500", RISK_BAR[flow.risk.level])}
+                                style={{ width: `${flow.risk.score}%` }}
+                              />
+                            </div>
+                            <dl className="mt-4 space-y-2 font-mono text-[11px]">
+                              <div className="flex justify-between">
+                                <dt className="text-slate-400">Origin:</dt>
+                                <dd className="font-bold text-slate-700">{flow.origin}</dd>
                               </div>
-                              <div className="mt-2.5 flex flex-wrap gap-1.5">
-                                {flow.flags.length === 0 && (
-                                  <span className="rounded border border-safe-500/25 bg-safe-500/8 px-2 py-1 font-mono text-[9.5px] uppercase tracking-[0.12em] text-safe-400">
-                                    Consistent with baseline
-                                  </span>
-                                )}
-                                {flow.flags.map((flag) => (
+                              <div className="flex justify-between">
+                                <dt className="text-slate-400">Interface:</dt>
+                                <dd className="font-bold text-slate-700">{flow.iface}</dd>
+                              </div>
+                              <div className="flex justify-between">
+                                <dt className="text-slate-400">Detector:</dt>
+                                <dd className="font-bold text-slate-700">{flow.detector}</dd>
+                              </div>
+                            </dl>
+                          </div>
+
+                          <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm lg:col-span-2">
+                            <div className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                              Anomaly Indicators
+                            </div>
+                            <div className="mt-2.5 flex flex-wrap gap-2">
+                              {flow.flags.length === 0 ? (
+                                <span className="rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 font-mono text-[10px] font-bold uppercase text-emerald-700">
+                                  Consistent with baseline
+                                </span>
+                              ) : (
+                                flow.flags.map((flag) => (
                                   <span
                                     key={flag}
-                                    className="rounded border border-warn-500/25 bg-warn-500/8 px-2 py-1 font-mono text-[9.5px] uppercase tracking-[0.12em] text-warn-400"
+                                    className="rounded-full bg-amber-50 border border-amber-200 px-3 py-1 font-mono text-[10px] font-bold uppercase text-amber-700"
                                   >
                                     {flag}
                                   </span>
-                                ))}
-                              </div>
-                              <div className="mt-3.5 font-mono text-[9px] uppercase tracking-[0.16em] text-mist-600">
-                                Analyst notes
-                              </div>
-                              <p className="mt-1 text-[12px] leading-relaxed text-mist-400">{flow.notes}</p>
-                              <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line/60 pt-3.5">
-                                <Link
-                                  to="/risk-analysis"
-                                  className="inline-flex items-center gap-1.5 rounded-md border border-pulse-500/40 bg-pulse-500/10 px-2.5 py-1.5 text-[11.5px] font-medium text-pulse-300 transition-colors hover:bg-pulse-500/20"
-                                >
-                                  Open Risk Analysis <ChevronRight size={12} aria-hidden />
-                                </Link>
-                                <Link
-                                  to="/alerts"
-                                  className="inline-flex items-center rounded-md border border-line px-2.5 py-1.5 text-[11.5px] font-medium text-mist-400 transition-colors hover:border-line-bright hover:text-mist-100"
-                                >
-                                  Related alerts
-                                </Link>
-                                <span className="ml-auto font-mono text-[9.5px] tabular-nums text-mist-600">
-                                  {flow.id} · captured {flow.capturedAt}
-                                </span>
-                              </div>
+                                ))
+                              )}
+                            </div>
+                            <div className="mt-3.5 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                              Analyst Notes
+                            </div>
+                            <p className="mt-1 text-xs leading-relaxed text-slate-600">{flow.notes}</p>
+                            <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-3">
+                              <Link
+                                to="/risk-analysis"
+                                className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-blue-700 transition-colors"
+                              >
+                                Open Risk Analysis <ChevronRight size={13} />
+                              </Link>
+                              <Link
+                                to="/alerts"
+                                className="inline-flex items-center rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                              >
+                                View Related Alerts
+                              </Link>
+                              <span className="ml-auto font-mono text-[10.5px] text-slate-400">
+                                {flow.id} · Captured {flow.capturedAt}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -485,32 +488,31 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
       </div>
 
       {/* Pagination */}
-      <footer className="flex flex-wrap items-center gap-3 border-t border-line px-4 py-3">
-        <span className="font-mono text-[10px] tabular-nums uppercase tracking-[0.12em] text-mist-500">
+      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-6 py-3.5">
+        <span className="font-sans text-xs font-semibold text-slate-500">
           Showing {from}–{to} of {sorted.length} flows
         </span>
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             aria-label="Previous page"
             disabled={safePage === 1}
             onClick={() => setPage(safePage - 1)}
-            className="grid size-8 place-items-center rounded-md border border-line text-mist-400 transition-colors hover:border-line-bright hover:text-mist-100 disabled:cursor-not-allowed disabled:opacity-40"
+            className="grid size-8 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
-            <ChevronLeft size={14} />
+            <ChevronLeft size={15} />
           </button>
           {Array.from({ length: pageCount }, (_, i) => i + 1).map((n) => (
             <button
               key={n}
               type="button"
               aria-label={`Page ${n}`}
-              aria-current={n === safePage ? "page" : undefined}
               onClick={() => setPage(n)}
               className={cn(
-                "grid size-8 place-items-center rounded-md border font-mono text-[11px] tabular-nums transition-colors duration-150",
+                "grid size-8 place-items-center rounded-xl font-mono text-xs font-bold transition-all cursor-pointer",
                 n === safePage
-                  ? "border-pulse-500/40 bg-pulse-500/10 text-pulse-300"
-                  : "border-line text-mist-400 hover:border-line-bright hover:text-mist-100",
+                  ? "bg-blue-600 text-white shadow-xs shadow-blue-500/25"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
               )}
             >
               {n}
@@ -521,9 +523,9 @@ export function TrafficTable({ flows }: { flows: readonly TrafficFlow[] }) {
             aria-label="Next page"
             disabled={safePage === pageCount}
             onClick={() => setPage(safePage + 1)}
-            className="grid size-8 place-items-center rounded-md border border-line text-mist-400 transition-colors hover:border-line-bright hover:text-mist-100 disabled:cursor-not-allowed disabled:opacity-40"
+            className="grid size-8 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
-            <ChevronRight size={14} />
+            <ChevronRight size={15} />
           </button>
         </div>
       </footer>

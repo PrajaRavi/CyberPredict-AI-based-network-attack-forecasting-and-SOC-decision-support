@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 interface PageHeaderProps {
   icon: LucideIcon;
-  /** Mono eyebrow line, e.g. "Module SOC-01 · Command overview". */
+  /** Eyebrow line, e.g. "Module SOC-01 · Command overview". */
   eyebrow: string;
   title: string;
   description: string;
@@ -13,22 +13,26 @@ interface PageHeaderProps {
 
 export function PageHeader({ icon: Icon, eyebrow, title, description, aside }: PageHeaderProps) {
   return (
-    <header className="flex flex-col gap-4 border-b border-line pb-6 md:flex-row md:items-start md:justify-between">
-      <div className="flex items-start gap-4">
-        <div className="grid size-11 shrink-0 place-items-center rounded-md border border-line-bright bg-ink-800 text-pulse-400 shadow-[0_0_28px_-8px_rgba(28,197,234,0.45)]">
-          <Icon size={20} strokeWidth={1.75} aria-hidden />
+    <header className="flex flex-col gap-3 sm:gap-4 pb-1 sm:pb-2 md:flex-row md:items-center md:justify-between">
+      <div className="flex items-start gap-3 sm:gap-4 min-w-0">
+        <div className="grid size-10 sm:size-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md shadow-indigo-500/25 transition-transform duration-300 hover:scale-105">
+          <Icon size={20} className="sm:size-[22px]" strokeWidth={2.2} aria-hidden />
         </div>
-        <div>
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-pulse-500/90">
-            {eyebrow}
-          </p>
-          <h1 className="mt-1 font-display text-[26px] font-semibold leading-tight tracking-tight text-mist-50">
+        <div className="min-w-0 flex-1">
+          <div className="inline-flex items-center gap-2">
+            <span className="font-mono text-[9.5px] sm:text-[10.5px] font-bold uppercase tracking-wider text-blue-600 truncate">
+              {eyebrow}
+            </span>
+          </div>
+          <h1 className="font-display text-[22px] sm:text-[26px] lg:text-[28px] font-extrabold leading-tight tracking-tight text-slate-900 truncate">
             {title}
           </h1>
-          <p className="mt-1.5 max-w-2xl text-[13.5px] leading-relaxed text-mist-400">{description}</p>
+          <p className="mt-1 max-w-2xl text-xs sm:text-[13.5px] leading-relaxed text-slate-500 font-normal">
+            {description}
+          </p>
         </div>
       </div>
-      {aside && <div className="shrink-0 md:pt-1.5">{aside}</div>}
+      {aside && <div className="shrink-0 flex items-center gap-2 pt-1 md:pt-0">{aside}</div>}
     </header>
   );
 }

@@ -1,5 +1,5 @@
-import { Info } from "lucide-react";
-import { cn } from "../../utils/cn";
+import { Clock, Info } from "lucide-react";
+import { cn } from "../../lib/utils";
 import { StatusBadge } from "../ui/Badge";
 
 export interface RiskWindowSegment {
@@ -18,76 +18,75 @@ export interface RiskWindowData {
 const toneFor = (p: number): "crit" | "warn" | "pulse" =>
   p >= 85 ? "crit" : p >= 70 ? "warn" : "pulse";
 
-const TONE_TEXT = {
-  crit: "text-crit-400",
-  warn: "text-warn-400",
-  pulse: "text-pulse-400",
-} as const;
-
 const TONE_BAR = {
-  crit: "bg-crit-500",
-  warn: "bg-warn-500",
-  pulse: "bg-pulse-500",
+  crit: "bg-gradient-to-r from-rose-500 to-pink-500",
+  warn: "bg-gradient-to-r from-amber-500 to-orange-500",
+  pulse: "bg-gradient-to-r from-blue-500 to-indigo-500",
 } as const;
 
-/**
- * Expected risk window — likelihood by upcoming time segment, with the
- * model's expected window highlighted. Likelihood only, never certainty.
- */
 export function RiskWindowCard({ data }: { data: RiskWindowData }) {
   return (
-    <section className="flex h-full flex-col rounded-lg border border-line bg-ink-800/60">
-      <header className="flex min-h-11 items-center gap-2.5 border-b border-line px-4 py-2">
-        <span aria-hidden className="size-1.5 shrink-0 rounded-xs bg-pulse-500/80" />
-        <h2 className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-mist-400">
-          Expected risk window
-        </h2>
-        <div className="ml-auto">
-          <StatusBadge tone="warn">High likelihood</StatusBadge>
-        </div>
-      </header>
+    <section className="flex h-full flex-col justify-between rounded-3xl border border-slate-200/70 bg-white p-4 sm:p-6 shadow-[0_4px_24px_-4px_rgba(20,30,55,0.05)] transition-all duration-300 hover:shadow-[0_12px_32px_-6px_rgba(20,30,55,0.09)]">
+      <div>
+        <header className="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
+          <div className="flex items-center gap-2">
+            <span className="size-2 rounded-full bg-amber-500" />
+            <h2 className="font-display text-[15px] sm:text-[17px] font-bold text-slate-900">
+              Expected Risk Window
+            </h2>
+          </div>
+          <StatusBadge tone="warn">High Likelihood</StatusBadge>
+        </header>
 
-      <div className="flex flex-1 flex-col gap-4 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-warn-500/25 bg-warn-500/[0.07] px-3.5 py-3">
+        {/* Highlight Peak Box */}
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/70 to-orange-50/40 p-3.5 sm:p-4">
           <div>
-            <div className="font-mono text-[9px] uppercase tracking-[0.16em] text-mist-600">
-              Highest likelihood
+            <div className="font-mono text-[10px] font-bold uppercase tracking-wider text-amber-700">
+              Highest Likelihood Window
             </div>
-            <div className="mt-1 font-display text-[20px] font-bold leading-none text-warn-400">
+            <div className="mt-1 font-display text-[18px] sm:text-[20px] font-extrabold leading-tight text-slate-900">
               {data.label}
             </div>
           </div>
           <div className="text-right">
-            <div className="font-mono text-[9px] uppercase tracking-[0.16em] text-mist-600">
-              Peak likelihood
+            <div className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              Peak Probability
             </div>
-            <div className="mt-1 font-mono text-[18px] font-semibold leading-none tabular-nums text-crit-400">
+            <div className="mt-1 font-mono text-lg sm:text-xl font-extrabold text-rose-600 tabular-nums">
               {data.peakLikelihood}%
             </div>
           </div>
         </div>
 
-        <div className="space-y-2.5">
+        {/* Segments */}
+        <div className="mt-4 space-y-2">
           {data.segments.map((seg) => {
             const tone = toneFor(seg.probability);
             return (
               <div
                 key={seg.label}
                 className={cn(
-                  "rounded-md border px-3 py-2",
-                  seg.inWindow ? "border-crit-500/30 bg-crit-500/6" : "border-line/60 bg-ink-850/50",
+                  "rounded-xl border p-2.5 transition-colors",
+                  seg.inWindow
+                    ? "border-rose-200 bg-rose-50/60 shadow-2xs"
+                    : "border-slate-100 bg-slate-50/60"
                 )}
               >
-                <div className="flex items-center justify-between gap-3 font-mono text-[9.5px] uppercase tracking-[0.14em]">
-                  <span className={seg.inWindow ? "font-medium text-crit-400" : "text-mist-500"}>
+                <div className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-wider">
+                  <span
+                    className={cn(
+                      "font-semibold",
+                      seg.inWindow ? "text-rose-700 font-bold" : "text-slate-600"
+                    )}
+                  >
                     {seg.label}
-                    {seg.inWindow && " · expected window"}
+                    {seg.inWindow && " · Active Window"}
                   </span>
-                  <span className={cn("tabular-nums", TONE_TEXT[tone])}>{seg.probability}%</span>
+                  <span className="font-bold text-slate-800">{seg.probability}%</span>
                 </div>
-                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-ink-700">
+                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-slate-200/80">
                   <div
-                    className={cn("h-full rounded-full transition-[width] duration-500 ease-out", TONE_BAR[tone])}
+                    className={cn("h-full rounded-full transition-all duration-700 ease-out", TONE_BAR[tone])}
                     style={{ width: `${seg.probability}%` }}
                   />
                 </div>
@@ -95,12 +94,12 @@ export function RiskWindowCard({ data }: { data: RiskWindowData }) {
             );
           })}
         </div>
-
-        <p className="mt-auto flex items-start gap-2 text-[11px] leading-relaxed text-mist-600">
-          <Info size={12} className="mt-0.5 shrink-0" aria-hidden />
-          {data.note}
-        </p>
       </div>
+
+      <p className="mt-4 border-t border-slate-100 pt-3 flex items-start gap-2 text-[11px] leading-relaxed text-slate-500">
+        <Info size={13} className="mt-0.5 shrink-0 text-slate-400" />
+        {data.note}
+      </p>
     </section>
   );
 }

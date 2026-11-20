@@ -1,5 +1,4 @@
-import { Clock } from "lucide-react";
-import { cn } from "../../utils/cn";
+import { Flame, TrendingDown } from "lucide-react";
 
 export interface ForecastStatusData {
   status: string;
@@ -10,62 +9,48 @@ export interface ForecastStatusData {
   nextRun: string;
 }
 
-const TONE_TEXT: Record<ForecastStatusData["tone"], string> = {
-  safe: "text-safe-400",
-  warn: "text-warn-400",
-  crit: "text-crit-400",
-};
-
-const TONE_DOT: Record<ForecastStatusData["tone"], string> = {
-  safe: "bg-safe-400",
-  warn: "bg-warn-400",
-  crit: "bg-crit-400",
-};
-
-/** Aggregate forecasting-engine status KPI (e.g. "Elevated Risk"). */
 export function ForecastStatus({ status }: { status: ForecastStatusData }) {
   return (
-    <article className="flex flex-col rounded-lg border border-line bg-ink-800/60 p-4 transition-colors duration-200 hover:border-line-bright">
-      <header className="flex items-center justify-between gap-2">
-        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-mist-500">
-          Forecast status
-        </span>
-        <Clock size={14} className="text-mist-500" aria-hidden />
-      </header>
+    <article className="group relative flex flex-col justify-between rounded-3xl bg-gradient-to-br from-[#ff7e95] via-[#fb6380] to-[#e84666] p-4 sm:p-5 lg:p-6 text-white shadow-[0_12px_28px_-6px_rgba(251,99,128,0.38)] transition-all duration-300 hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-[0_20px_36px_-6px_rgba(251,99,128,0.5)] cursor-pointer overflow-hidden">
+      {/* Ambient decorative glow */}
+      <div className="pointer-events-none absolute -right-8 -top-8 size-32 rounded-full bg-white/10 blur-xl transition-all duration-500 group-hover:scale-125" />
 
-      <div className="mt-4 flex items-center gap-2.5">
-        <span className="relative flex size-2 shrink-0">
-          <span
-            className={cn(
-              "absolute inline-flex h-full w-full animate-ping rounded-full opacity-40 [animation-duration:2.4s]",
-              TONE_DOT[status.tone],
-            )}
-          />
-          <span className={cn("relative inline-flex size-2 rounded-full", TONE_DOT[status.tone])} />
-        </span>
-        <span className={cn("font-display text-[19px] font-semibold leading-none", TONE_TEXT[status.tone])}>
-          {status.status}
-        </span>
+      {/* Header: Icon badge + Status pill */}
+      <div>
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
+          <div className="grid size-10 sm:size-11 place-items-center rounded-2xl bg-white/20 backdrop-blur-md text-white shadow-xs">
+            <Flame size={20} className="sm:size-[22px]" strokeWidth={2.4} />
+          </div>
+          <span className="rounded-full bg-white/20 px-2.5 sm:px-3 py-0.5 sm:py-1 font-mono text-[9.5px] sm:text-[10.5px] font-bold uppercase tracking-wider backdrop-blur-md">
+            Active Watch
+          </span>
+        </div>
+
+        <div className="mt-3.5 sm:mt-4">
+          <span className="font-sans text-xs sm:text-[13px] font-medium text-white/85 tracking-wide">
+            Threat Posture Status
+          </span>
+          <div className="mt-1 flex items-baseline gap-2">
+            <span className="font-display text-[22px] sm:text-[26px] lg:text-[30px] font-extrabold leading-tight tracking-tight text-white drop-shadow-xs truncate">
+              {status.status}
+            </span>
+          </div>
+        </div>
       </div>
 
-      <dl className="mt-4 space-y-2 font-mono text-[10px]">
-        <div className="flex items-baseline justify-between gap-3 border-b border-line/60 pb-2">
-          <dt className="uppercase tracking-[0.14em] text-mist-600">Risk window</dt>
-          <dd className="text-right text-mist-300">{status.window}</dd>
-        </div>
-        <div className="flex items-baseline justify-between gap-3 border-b border-line/60 pb-2">
-          <dt className="uppercase tracking-[0.14em] text-mist-600">Model</dt>
-          <dd className="text-right text-mist-300">{status.model}</dd>
-        </div>
-        <div className="flex items-baseline justify-between gap-3">
-          <dt className="uppercase tracking-[0.14em] text-mist-600">Next evaluation</dt>
-          <dd className="text-right text-pulse-400">{status.nextRun}</dd>
-        </div>
-      </dl>
+      {/* Key model telemetry */}
+      <div className="mt-2.5 sm:mt-3 flex items-center justify-between gap-2 border-t border-white/15 pt-2 text-[11px] sm:text-xs text-white/90">
+        <span className="font-medium truncate">{status.model}</span>
+        <span className="font-mono text-[10px] sm:text-[11px] text-white/80 shrink-0">Refreshed {status.lastRun}</span>
+      </div>
 
-      <p className="mt-auto pt-3.5 font-mono text-[9.5px] uppercase tracking-[0.14em] text-mist-600">
-        Last run {status.lastRun}
-      </p>
+      {/* Footer Pill */}
+      <div className="mt-3 sm:mt-3.5">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 sm:px-3.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold backdrop-blur-md text-white shadow-2xs">
+          <TrendingDown size={12} />
+          <span className="truncate">Next eval {status.nextRun} ↘ Active</span>
+        </div>
+      </div>
     </article>
   );
 }

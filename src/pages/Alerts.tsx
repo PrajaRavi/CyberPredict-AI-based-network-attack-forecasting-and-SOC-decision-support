@@ -4,16 +4,36 @@ import { AlertCard, type AlertSeverity } from "../components/alerts/AlertCard";
 import { StatusBadge } from "../components/ui/Badge";
 import { PageHeader } from "../components/ui/PageHeader";
 import { alerts } from "../data/mockAlerts.js";
-import { cn } from "../utils/cn";
+import { cn } from "../lib/utils";
 
 type SeverityFilter = "ALL" | AlertSeverity;
 
-const FILTER_META: Record<SeverityFilter, { label: string; dot: string; active: string }> = {
-  ALL: { label: "All", dot: "bg-mist-500", active: "border-line-bright bg-ink-750/70 text-mist-100" },
-  CRITICAL: { label: "Critical", dot: "bg-crit-400", active: "border-crit-500/40 bg-crit-500/10 text-crit-400" },
-  HIGH: { label: "High", dot: "bg-crit-500", active: "border-crit-500/40 bg-crit-500/10 text-crit-400" },
-  MEDIUM: { label: "Medium", dot: "bg-warn-400", active: "border-warn-500/40 bg-warn-500/10 text-warn-400" },
-  LOW: { label: "Low", dot: "bg-safe-400", active: "border-safe-500/40 bg-safe-500/10 text-safe-400" },
+const FILTER_META: Record<SeverityFilter, { label: string; dot: string; activeClass: string }> = {
+  ALL: {
+    label: "All",
+    dot: "bg-slate-400",
+    activeClass: "bg-blue-600 text-white shadow-xs shadow-blue-500/25 border-transparent",
+  },
+  CRITICAL: {
+    label: "Critical",
+    dot: "bg-rose-500",
+    activeClass: "bg-rose-600 text-white shadow-xs shadow-rose-500/25 border-transparent",
+  },
+  HIGH: {
+    label: "High",
+    dot: "bg-rose-400",
+    activeClass: "bg-rose-500 text-white shadow-xs shadow-rose-500/25 border-transparent",
+  },
+  MEDIUM: {
+    label: "Medium",
+    dot: "bg-amber-500",
+    activeClass: "bg-amber-500 text-white shadow-xs shadow-amber-500/25 border-transparent",
+  },
+  LOW: {
+    label: "Low",
+    dot: "bg-emerald-500",
+    activeClass: "bg-emerald-600 text-white shadow-xs shadow-emerald-500/25 border-transparent",
+  },
 };
 
 const FILTER_ORDER: SeverityFilter[] = ["ALL", "CRITICAL", "HIGH", "MEDIUM", "LOW"];
@@ -30,23 +50,23 @@ export default function AlertsPage() {
   const visible = filter === "ALL" ? alerts : alerts.filter((a) => a.severity === filter);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
         icon={BellRing}
         eyebrow="Module ALR-05 · Incident queue"
         title="Alerts"
-        description="Severity-ranked incident queue with model-assisted triage. Alerts are decision support — every response step stays with the analyst."
+        description="Severity-ranked incident queue with model-assisted triage. Every response step remains with the analyst."
         aside={
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge tone="crit" pulse>
-              {counts.CRITICAL + counts.HIGH} high+ active
+              {counts.CRITICAL + counts.HIGH} High+ Active
             </StatusBadge>
-            <StatusBadge tone="neutral">Manual mode</StatusBadge>
+            <StatusBadge tone="neutral">Analyst Mode</StatusBadge>
           </div>
         }
       />
 
-      {/* Severity filters */}
+      {/* Severity filter pills */}
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Severity filter">
         {FILTER_ORDER.map((sev) => {
           const meta = FILTER_META[sev];
@@ -58,44 +78,52 @@ export default function AlertsPage() {
               onClick={() => setFilter(sev)}
               aria-pressed={active}
               className={cn(
-                "inline-flex h-9 items-center gap-2 rounded-md border px-3 font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] transition-colors duration-150",
-                active ? meta.active : "border-line text-mist-400 hover:border-line-bright hover:text-mist-100",
+                "inline-flex h-9 items-center gap-2 rounded-full border px-3.5 font-sans text-xs font-bold transition-all duration-150 cursor-pointer shadow-2xs",
+                active
+                  ? meta.activeClass
+                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
               )}
             >
-              <span className={cn("size-1.5 rounded-full", meta.dot, sev === "CRITICAL" && active && "animate-pulse")} />
+              <span
+                className={cn(
+                  "size-1.5 rounded-full",
+                  meta.dot,
+                  sev === "CRITICAL" && active && "animate-pulse"
+                )}
+              />
               {meta.label}
-              <span className="tabular-nums opacity-70">{counts[sev]}</span>
+              <span className="tabular-nums opacity-80 font-mono text-[11px]">{counts[sev]}</span>
             </button>
           );
         })}
-        <span className="ml-auto hidden font-mono text-[10px] uppercase tracking-[0.14em] text-mist-600 sm:inline">
-          Newest first · {visible.length} shown
+        <span className="ml-auto hidden font-mono text-xs text-slate-400 sm:inline font-medium">
+          Newest first · {visible.length} displayed
         </span>
       </div>
 
-      {/* Alert list */}
+      {/* Alert Cards List */}
       {visible.length > 0 ? (
-        <div className="space-y-3.5">
+        <div className="space-y-4">
           {visible.map((alert, i) => (
             <AlertCard key={alert.id} alert={alert} index={i} />
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-line bg-ink-800/60 px-4 py-16 text-center">
-          <Radar size={22} className="text-mist-600" aria-hidden />
-          <p className="text-[13px] text-mist-400">No alerts at this severity — the queue is clear here.</p>
+        <div className="flex flex-col items-center gap-3 rounded-3xl border border-slate-200 bg-white p-12 text-center shadow-xs">
+          <Radar size={28} className="text-slate-300" aria-hidden />
+          <p className="text-sm font-semibold text-slate-600">No alerts at this severity — the queue is clear.</p>
           <button
             type="button"
             onClick={() => setFilter("ALL")}
-            className="rounded-md border border-pulse-500/40 bg-pulse-500/10 px-3 py-1.5 text-[12px] font-medium text-pulse-300 transition-colors hover:bg-pulse-500/20"
+            className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-700 transition-colors cursor-pointer"
           >
-            Show all alerts
+            Show All Alerts
           </button>
         </div>
       )}
 
-      <p className="border-t border-line/70 pt-4 font-mono text-[9.5px] uppercase leading-relaxed tracking-[0.14em] text-mist-600">
-        Decision support only — CyberPredict never executes automatic blocking or destructive actions.
+      <p className="border-t border-slate-200 pt-4 font-sans text-xs text-slate-400">
+        Decision support only — CyberPredict never executes automated blocking or destructive actions.
       </p>
     </div>
   );
