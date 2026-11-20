@@ -19,9 +19,9 @@ const toneFor = (p: number): "crit" | "warn" | "pulse" =>
   p >= 85 ? "crit" : p >= 70 ? "warn" : "pulse";
 
 const TONE_BAR = {
-  crit: "bg-gradient-to-r from-rose-500 to-pink-500",
-  warn: "bg-gradient-to-r from-amber-500 to-orange-500",
-  pulse: "bg-gradient-to-r from-blue-500 to-indigo-500",
+  crit: "bg-linear-to-r from-rose-500 to-pink-500",
+  warn: "bg-linear-to-r from-amber-500 to-orange-500",
+  pulse: "bg-linear-to-r from-blue-500 to-indigo-500",
 } as const;
 
 export function RiskWindowCard({ data }: { data: RiskWindowData }) {
@@ -39,7 +39,7 @@ export function RiskWindowCard({ data }: { data: RiskWindowData }) {
         </header>
 
         {/* Highlight Peak Box */}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/70 to-orange-50/40 p-3.5 sm:p-4">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200/80 bg-linear-to-br from-amber-50/70 to-orange-50/40 p-3.5 sm:p-4">
           <div>
             <div className="font-mono text-[10px] font-bold uppercase tracking-wider text-amber-700">
               Highest Likelihood Window

@@ -44,7 +44,7 @@ export function RiskLevelBadge({ level, size = "md", className }: RiskLevelBadge
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border font-mono font-bold uppercase leading-none transition-all",
         size === "sm"
-          ? "px-2.5 py-1 text-[9.5px] tracking-[0.1em]"
+          ? "px-2.5 py-1 text-[9.5px] tracking-widest"
           : "px-3 py-1.5 text-[11px] tracking-[0.12em]",
         s.chip,
         className

@@ -17,7 +17,7 @@ const badgeVariants = cva(
         success: "border-emerald-200 bg-emerald-50 text-emerald-700",
         warning: "border-amber-200 bg-amber-50 text-amber-700",
         gradient:
-          "border-transparent bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-2xs",
+          "border-transparent bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-2xs",
       },
     },
     defaultVariants: {

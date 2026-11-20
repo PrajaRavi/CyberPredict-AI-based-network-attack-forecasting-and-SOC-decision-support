@@ -31,7 +31,7 @@ export function Panel({
         className
       )}
     >
-      <header className="flex min-h-12 items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 via-white to-slate-50/40 px-5 py-3">
+      <header className="flex min-h-12 items-center justify-between gap-3 border-b border-slate-100 bg-linear-to-r from-slate-50/80 via-white to-slate-50/40 px-5 py-3">
         <div className="flex items-center gap-2.5 min-w-0">
           <span
             aria-hidden

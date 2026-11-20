@@ -182,7 +182,7 @@ export function Header({ onMenu }: HeaderProps) {
             aria-haspopup="menu"
             className="flex items-center gap-1.5 sm:gap-2.5 rounded-full border border-slate-200/80 bg-white p-1 sm:pl-1 sm:pr-3 shadow-2xs hover:bg-slate-50/80 transition-all cursor-pointer active:scale-[0.98]"
           >
-            <div className="grid size-7 sm:size-8 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 font-bold text-[11px] sm:text-xs text-white shadow-2xs">
+            <div className="grid size-7 sm:size-8 place-items-center rounded-full bg-linear-to-br from-indigo-500 to-purple-600 font-bold text-[11px] sm:text-xs text-white shadow-2xs">
               AR
             </div>
             <span className="hidden sm:inline-block font-display text-xs sm:text-[13px] font-bold text-slate-800 whitespace-nowrap">

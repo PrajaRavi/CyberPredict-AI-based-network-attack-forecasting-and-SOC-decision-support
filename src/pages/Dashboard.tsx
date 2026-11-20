@@ -22,7 +22,7 @@ import {
   riskTimeline,
 } from "../data/mockDashboard.js";
 
-function AiForecastCard() {
+export function AiForecastCard() {
   return (
     <Panel
       title="AI Forecast Model"
@@ -30,7 +30,7 @@ function AiForecastCard() {
       className="flex h-full flex-col"
       bodyClassName="flex flex-1 flex-col gap-3.5 sm:gap-4 p-4 sm:p-6"
     >
-      <div className="flex items-start gap-3 rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/70 to-orange-50/40 p-3.5 sm:p-4">
+      <div className="flex items-start gap-3 rounded-2xl border border-amber-200/80 bg-linear-to-br from-amber-50/70 to-orange-50/40 p-3.5 sm:p-4">
         <Radar size={18} className="mt-0.5 shrink-0 text-amber-600" aria-hidden />
         <div className="min-w-0 flex-1">
           <div className="font-display text-sm sm:text-[15px] font-bold text-slate-900 truncate">

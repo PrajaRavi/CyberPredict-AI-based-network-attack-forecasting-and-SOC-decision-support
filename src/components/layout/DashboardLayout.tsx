@@ -20,7 +20,7 @@ export function DashboardLayout() {
   }, [pathname]);
 
   return (
-    <div className="flex h-dvh w-full overflow-hidden bg-[#F4F6FB] text-slate-800">
+    <div className="flex h-dvh w-full overflow-hidden bg-ink-950 text-slate-800">
       {/* Desktop Sidebar */}
       <Sidebar className="hidden lg:flex" />
 

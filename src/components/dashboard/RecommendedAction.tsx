@@ -41,7 +41,7 @@ export function RecommendedAction({ action }: { action: RecommendedActionData })
         </header>
 
         <div className="mt-4 flex items-start gap-3.5">
-          <div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-xs">
+          <div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-linear-to-br from-indigo-500 to-purple-600 text-white shadow-xs">
             <Sparkles size={18} aria-hidden />
           </div>
           <div>

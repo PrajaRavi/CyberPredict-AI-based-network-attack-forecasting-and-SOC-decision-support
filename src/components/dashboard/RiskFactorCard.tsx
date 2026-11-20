@@ -85,7 +85,7 @@ export function RiskFactorCard({ factor, index = 0 }: { factor: RiskFactor; inde
         </div>
         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
           <div
-            className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-700 ease-out", meta.gradient)}
+            className={cn("h-full rounded-full bg-linear-to-r transition-all duration-700 ease-out", meta.gradient)}
             style={{ width: `${barWidth}%` }}
           />
         </div>

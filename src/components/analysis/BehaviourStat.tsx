@@ -92,7 +92,7 @@ export function BehaviourStat({ stat, index = 0 }: { stat: BehaviourStatData; in
       {/* Top subtle gradient tint */}
       <div
         className={cn(
-          "pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b opacity-60 transition-opacity group-hover:opacity-100",
+          "pointer-events-none absolute inset-x-0 top-0 h-16 bg-linear-to-b opacity-60 transition-opacity group-hover:opacity-100",
           meta.gradient
         )}
       />
