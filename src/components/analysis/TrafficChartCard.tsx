@@ -8,13 +8,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { cn } from "../../utils/cn";
+import { cn } from "../../lib/utils";
 
 export interface MetricPoint {
   t: string;
-  /** Observed value. */
   v: number | null;
-  /** Projected continuation (optional). */
   f: number | null;
 }
 
@@ -31,17 +29,17 @@ export interface TrafficMetric {
 }
 
 const TONE_TEXT: Record<TrafficMetric["tone"], string> = {
-  crit: "text-crit-400",
-  warn: "text-warn-400",
-  safe: "text-safe-400",
-  pulse: "text-pulse-400",
+  crit: "text-rose-600",
+  warn: "text-amber-600",
+  safe: "text-emerald-600",
+  pulse: "text-blue-600",
 };
 
 const TONE_CHIP: Record<TrafficMetric["tone"], string> = {
-  crit: "border-crit-500/25 bg-crit-500/10 text-crit-400",
-  warn: "border-warn-500/25 bg-warn-500/10 text-warn-400",
-  safe: "border-safe-500/25 bg-safe-500/10 text-safe-400",
-  pulse: "border-pulse-500/25 bg-pulse-500/10 text-pulse-400",
+  crit: "border-rose-200 bg-rose-50 text-rose-700",
+  warn: "border-amber-200 bg-amber-50 text-amber-700",
+  safe: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  pulse: "border-blue-200 bg-blue-50 text-blue-700",
 };
 
 function MiniTooltip({
@@ -56,51 +54,47 @@ function MiniTooltip({
   if (!active || !payload || payload.length === 0) return null;
   const p = payload[0].payload;
   return (
-    <div className="rounded-md border border-line bg-ink-850/95 px-2.5 py-2 font-mono text-[10px] shadow-[0_10px_28px_-10px_rgba(0,0,0,0.8)]">
-      <div className="text-mist-600">{p.t}</div>
-      <div className="mt-1 flex items-center justify-between gap-4">
-        <span className="text-mist-500">Observed</span>
-        <span className="tabular-nums text-mist-100">{p.v ?? "—"} {unit}</span>
+    <div className="rounded-xl border border-slate-200 bg-white/95 backdrop-blur-md p-2 font-mono text-[10px] shadow-lg text-slate-800">
+      <div className="text-slate-400 font-bold">{p.t}</div>
+      <div className="mt-1 flex items-center justify-between gap-3">
+        <span className="text-slate-500">Observed:</span>
+        <span className="font-bold text-slate-900">{p.v ?? "—"} {unit}</span>
       </div>
       {p.f !== null && (
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-mist-500">Projected</span>
-          <span className="tabular-nums text-warn-400">{p.f} {unit}</span>
+        <div className="flex items-center justify-between gap-3 text-amber-600">
+          <span>Projected:</span>
+          <span className="font-bold">{p.f} {unit}</span>
         </div>
       )}
     </div>
   );
 }
 
-/**
- * Compact trend chart for one traffic metric: observed history as a cyan
- * area against the dashed baseline, with an optional amber projection tail.
- */
 export function TrafficChartCard({ metric, index = 0 }: { metric: TrafficMetric; index?: number }) {
   return (
     <article
-      className="animate-enter flex flex-col rounded-md border border-line bg-ink-850/70 p-3.5 transition-colors duration-200 hover:border-line-bright"
-      style={{ animationDelay: `${index * 70}ms` }}
+      className="animate-enter flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_2px_12px_rgba(20,30,55,0.03)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-4px_rgba(20,30,55,0.08)] hover:border-slate-300"
+      style={{ animationDelay: `${index * 60}ms` }}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="truncate text-[12.5px] font-semibold text-mist-100">{metric.label}</h3>
-          <div className="mt-1.5 flex items-baseline gap-1.5">
+          <h3 className="truncate text-xs font-bold text-slate-800 uppercase tracking-wide">{metric.label}</h3>
+          <div className="mt-1 flex items-baseline gap-1.5">
             <span
               className={cn(
-                "font-display text-[20px] font-bold leading-none tabular-nums",
-                TONE_TEXT[metric.tone],
+                "font-display text-[22px] font-extrabold leading-none tabular-nums",
+                TONE_TEXT[metric.tone]
               )}
             >
               {metric.current}
             </span>
-            <span className="font-mono text-[9.5px] text-mist-500">{metric.unit}</span>
+            <span className="font-mono text-[11px] font-medium text-slate-400">{metric.unit}</span>
           </div>
         </div>
         <span
           className={cn(
-            "shrink-0 rounded border px-1.5 py-0.5 font-mono text-[9px] font-medium tabular-nums",
-            TONE_CHIP[metric.tone],
+            "shrink-0 rounded-full border px-2 py-0.5 font-mono text-[10px] font-bold tabular-nums shadow-2xs",
+            TONE_CHIP[metric.tone]
           )}
         >
           {metric.deltaPct}
@@ -115,43 +109,43 @@ export function TrafficChartCard({ metric, index = 0 }: { metric: TrafficMetric;
           >
             <defs>
               <linearGradient id={`trend-fill-${metric.id}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#1CC5EA" stopOpacity={0.22} />
-                <stop offset="100%" stopColor="#1CC5EA" stopOpacity={0} />
+                <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.25} />
+                <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.0} />
               </linearGradient>
             </defs>
             <XAxis
               dataKey="t"
-              tick={{ fill: "#4A5C7C", fontSize: 8.5, fontFamily: "'IBM Plex Mono', monospace" }}
+              tick={{ fill: "#94A3B8", fontSize: 9, fontFamily: "'IBM Plex Mono', monospace" }}
               tickLine={false}
-              axisLine={{ stroke: "#142138" }}
+              axisLine={{ stroke: "#E2E8F0" }}
               interval="preserveStartEnd"
-              minTickGap={26}
+              minTickGap={20}
             />
             <YAxis hide domain={["auto", "auto"]} />
             <Tooltip
               content={<MiniTooltip unit={metric.unit} />}
-              cursor={{ stroke: "#1F3357", strokeDasharray: "3 3" }}
+              cursor={{ stroke: "#CBD5E1", strokeDasharray: "3 3" }}
             />
-            <ReferenceLine y={metric.baseline} stroke="#64789A" strokeDasharray="4 4" strokeOpacity={0.45} />
+            <ReferenceLine y={metric.baseline} stroke="#94A3B8" strokeDasharray="3 3" strokeOpacity={0.6} />
             <Area
               type="monotone"
               dataKey="v"
-              stroke="#45DDF8"
-              strokeWidth={1.75}
+              stroke="#3B82F6"
+              strokeWidth={2}
               fill={`url(#trend-fill-${metric.id})`}
               dot={false}
-              activeDot={{ r: 3, fill: "#45DDF8", stroke: "#05080F", strokeWidth: 2 }}
+              activeDot={{ r: 4, fill: "#3B82F6", stroke: "#FFFFFF", strokeWidth: 2 }}
               connectNulls={false}
             />
             {metric.hasForecast && (
               <Line
                 type="monotone"
                 dataKey="f"
-                stroke="#F7AC2B"
-                strokeWidth={1.75}
-                strokeDasharray="5 4"
+                stroke="#F59E0B"
+                strokeWidth={2}
+                strokeDasharray="4 3"
                 dot={false}
-                activeDot={{ r: 3, fill: "#F7AC2B", stroke: "#05080F", strokeWidth: 2 }}
+                activeDot={{ r: 4, fill: "#F59E0B", stroke: "#FFFFFF", strokeWidth: 2 }}
                 connectNulls={false}
               />
             )}
@@ -159,13 +153,13 @@ export function TrafficChartCard({ metric, index = 0 }: { metric: TrafficMetric;
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-2 flex items-center justify-between gap-2 font-mono text-[8.5px] uppercase tracking-[0.12em] text-mist-600">
+      <div className="mt-2 flex items-center justify-between gap-2 border-t border-slate-100 pt-2 font-mono text-[9px] uppercase tracking-wider text-slate-400">
         <span>
           Baseline {metric.baseline} {metric.unit}
         </span>
         {metric.hasForecast && (
-          <span className="flex items-center gap-1.5">
-            <span className="h-0 w-3.5 border-t-2 border-dashed border-warn-400" /> Projected
+          <span className="flex items-center gap-1 font-semibold text-amber-600">
+            <span className="size-1.5 rounded-full bg-amber-500" /> Projected
           </span>
         )}
       </div>

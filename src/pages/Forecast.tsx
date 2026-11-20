@@ -25,12 +25,12 @@ import { forecastHorizon, forecastSummary } from "../data/mockForecast.js";
 
 export default function ForecastPage() {
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
         icon={TrendingUp}
         eyebrow="Module FCST-04 · Attack prediction"
         title="Forecast"
-        description="Probabilistic attack outlook from the forecasting engine — current risk, predicted vector, model confidence and the expected risk window. Likelihood only; no event is confirmed."
+        description="Probabilistic attack outlook from the neural forecasting engine — current risk, predicted attack vector, calibrated model confidence and expected risk window."
         aside={
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge tone="warn" pulse>
@@ -41,8 +41,8 @@ export default function ForecastPage() {
         }
       />
 
-      {/* Forecast summary strip */}
-      <Panel title="Forecast summary" code={`Refreshed ${forecastStatus.lastRun} · ${forecastStatus.model}`}>
+      {/* Forecast summary strip with gradient icon tiles */}
+      <Panel title="Forecast Summary" code={`Refreshed ${forecastStatus.lastRun} · ${forecastStatus.model}`}>
         <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {forecastSummary.map((stat, i) => (
             <ForecastStatTile key={stat.id} stat={stat} index={i} />
@@ -51,7 +51,7 @@ export default function ForecastPage() {
       </Panel>
 
       {/* Primary forecast visualization + model output */}
-      <section aria-label="Forecast visualization" className="grid gap-4 xl:grid-cols-3">
+      <section aria-label="Forecast visualization" className="grid gap-6 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <ForecastHorizonChart data={forecastHorizon} />
         </div>
@@ -62,7 +62,7 @@ export default function ForecastPage() {
       </section>
 
       {/* Risk timeline + expected risk window */}
-      <section aria-label="Risk timeline and window" className="grid gap-4 xl:grid-cols-5">
+      <section aria-label="Risk timeline and window" className="grid gap-6 xl:grid-cols-5">
         <div className="xl:col-span-3">
           <RiskTimeline points={riskTimeline.points} threshold={riskTimeline.threshold} />
         </div>
@@ -72,9 +72,9 @@ export default function ForecastPage() {
       </section>
 
       {/* Main risk factors + recommended action */}
-      <section aria-label="Factors and guidance" className="grid gap-4 xl:grid-cols-3">
-        <Panel title="Main risk factors" code="Why risk is increasing" className="xl:col-span-2">
-          <div className="grid gap-3.5 md:grid-cols-2">
+      <section aria-label="Factors and guidance" className="grid gap-6 xl:grid-cols-3">
+        <Panel title="Main Risk Factors" code="Why Risk Is Increasing" className="xl:col-span-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             {riskFactors.map((factor, i) => (
               <RiskFactorCard key={factor.id} factor={factor} index={i} />
             ))}
@@ -83,7 +83,7 @@ export default function ForecastPage() {
         <RecommendedAction action={recommendedAction} />
       </section>
 
-      {/* What-if simulation — locked advanced feature */}
+      {/* What-if simulation */}
       <WhatIfSimulation />
     </div>
   );

@@ -1,53 +1,100 @@
-import type { ReactNode } from "react";
-import { cn } from "../../utils/cn";
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../../lib/utils";
 
-export type BadgeTone = "safe" | "warn" | "crit" | "pulse" | "neutral";
+const badgeVariants = cva(
+  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+  {
+    variants: {
+      variant: {
+        default:
+          "border-transparent bg-blue-600 text-white shadow-2xs hover:bg-blue-700",
+        secondary:
+          "border-transparent bg-slate-100 text-slate-900 hover:bg-slate-200",
+        destructive:
+          "border-transparent bg-rose-500 text-white shadow-2xs hover:bg-rose-600",
+        outline: "text-slate-700 border-slate-200",
+        success: "border-emerald-200 bg-emerald-50 text-emerald-700",
+        warning: "border-amber-200 bg-amber-50 text-amber-700",
+        gradient:
+          "border-transparent bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-2xs",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
 
-const TONES: Record<BadgeTone, string> = {
-  safe: "border-safe-500/25 bg-safe-500/10 text-safe-400",
-  warn: "border-warn-500/25 bg-warn-500/10 text-warn-400",
-  crit: "border-crit-500/25 bg-crit-500/10 text-crit-400",
-  pulse: "border-pulse-500/25 bg-pulse-500/10 text-pulse-400",
-  neutral: "border-line-bright bg-ink-750/60 text-mist-400",
-};
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {}
 
-interface StatusBadgeProps {
-  tone?: BadgeTone;
-  /** Animate the status dot (for live / in-progress states). */
-  pulse?: boolean;
-  className?: string;
-  children: ReactNode;
+export function Badge({ className, variant, ...props }: BadgeProps) {
+  return (
+    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+  );
 }
 
-export function StatusBadge({ tone = "neutral", pulse = false, className, children }: StatusBadgeProps) {
+export type BadgeTone = "safe" | "warn" | "crit" | "pulse" | "neutral" | "brand" | "purple";
+
+const TONES: Record<BadgeTone, string> = {
+  safe: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  warn: "border-amber-200 bg-amber-50 text-amber-700",
+  crit: "border-rose-200 bg-rose-50 text-rose-700",
+  pulse: "border-cyan-200 bg-cyan-50 text-cyan-700",
+  neutral: "border-slate-200 bg-slate-50 text-slate-600",
+  brand: "border-blue-200 bg-blue-50 text-blue-700",
+  purple: "border-purple-200 bg-purple-50 text-purple-700",
+};
+
+export interface StatusBadgeProps {
+  tone?: BadgeTone;
+  pulse?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}
+
+export function StatusBadge({
+  tone = "neutral",
+  pulse = false,
+  className,
+  children,
+}: StatusBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded border px-2 py-[5px] font-mono text-[10px] font-medium uppercase leading-none tracking-[0.12em]",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] font-medium uppercase leading-none tracking-[0.08em] shadow-2xs",
         TONES[tone],
-        className,
+        className
       )}
     >
-      <span className={cn("size-1.5 shrink-0 rounded-full bg-current", pulse && "animate-pulse")} />
+      <span
+        className={cn(
+          "size-1.5 shrink-0 rounded-full bg-current",
+          pulse && "animate-pulse"
+        )}
+      />
       {children}
     </span>
   );
 }
 
-/** Fixed SOC readiness indicator shown in the topbar. */
 export function ThreatChip() {
   return (
     <div
-      className="hidden h-9 items-center gap-2.5 rounded-md border border-warn-500/25 bg-warn-500/[0.08] px-3 md:inline-flex"
+      className="hidden h-9 items-center gap-2.5 rounded-xl border border-amber-200/80 bg-amber-50/80 px-3 md:inline-flex shadow-2xs"
       title="Aggregate threat condition derived from alert volume and forecast probability"
     >
-      <span className="relative flex size-1.5">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-warn-400 opacity-40 [animation-duration:2.4s]" />
-        <span className="relative inline-flex size-1.5 rounded-full bg-warn-400" />
+      <span className="relative flex size-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-60 [animation-duration:2.4s]" />
+        <span className="relative inline-flex size-2 rounded-full bg-amber-500" />
       </span>
-      <span className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-warn-400">
+      <span className="font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-amber-700">
         Threatcon 3 · Elevated
       </span>
     </div>
   );
 }
+
+export { badgeVariants };
