@@ -1,4 +1,5 @@
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
+import { AlertProvider } from "./context/AlertContext";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
 import AlertsPage from "./pages/Alerts";
 import DashboardPage from "./pages/Dashboard";
@@ -18,18 +19,20 @@ import RiskAnalysisPage from "./pages/RiskAnalysis";
 export default function App() {
   return (
     <HashRouter>
-      <Routes>
-        <Route element={<DashboardLayout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/traffic" element={<NetworkTrafficPage />} />
-          <Route path="/risk-analysis" element={<RiskAnalysisPage />} />
-          <Route path="/forecast" element={<ForecastPage />} />
-          <Route path="/alerts" element={<AlertsPage />} />
-          <Route path="/model-performance" element={<ModelPerformancePage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
+      <AlertProvider>
+        <Routes>
+          <Route element={<DashboardLayout />}>
+            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/traffic" element={<NetworkTrafficPage />} />
+            <Route path="/risk-analysis" element={<RiskAnalysisPage />} />
+            <Route path="/forecast" element={<ForecastPage />} />
+            <Route path="/alerts" element={<AlertsPage />} />
+            <Route path="/model-performance" element={<ModelPerformancePage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
+      </AlertProvider>
     </HashRouter>
   );
 }

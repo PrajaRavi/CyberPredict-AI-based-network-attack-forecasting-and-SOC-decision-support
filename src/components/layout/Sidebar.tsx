@@ -9,6 +9,7 @@ import {
 import { NavLink } from "react-router-dom";
 import { NAV_ITEMS } from "../../data/navigation";
 import { cn } from "../../lib/utils";
+import { useAlerts } from "../../context/AlertContext";
 
 interface SidebarProps {
   className?: string;
@@ -22,6 +23,7 @@ const SYSTEM_ROWS = [
 ];
 
 export function Sidebar({ className, onNavigate }: SidebarProps) {
+  const { totalCount, hasCriticalOrHigh } = useAlerts();
   return (
     <aside
       className={cn(
@@ -91,10 +93,23 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
                           <Icon size={17} strokeWidth={2.2} />
                         </div>
                         <span className="truncate">{item.label}</span>
-                        {item.badge && (
-                          <span className="ml-auto rounded-full bg-rose-500 px-2 py-0.5 text-[11px] font-bold leading-tight text-white shadow-xs shadow-rose-500/30">
-                            {item.badge.label}
+                        {item.id === "alerts" ? (
+                          <span
+                            className={cn(
+                              "ml-auto rounded-full px-2 py-0.5 text-[11px] font-bold leading-tight shadow-xs transition-all",
+                              hasCriticalOrHigh
+                                ? "bg-rose-600 text-white shadow-rose-500/40 animate-pulse ring-1 ring-rose-400"
+                                : "bg-slate-200/90 text-slate-700"
+                            )}
+                          >
+                            {totalCount}
                           </span>
+                        ) : (
+                          item.badge && (
+                            <span className="ml-auto rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-bold leading-tight text-slate-700 shadow-xs">
+                              {item.badge.label}
+                            </span>
+                          )
                         )}
                       </>
                     )}
@@ -105,7 +120,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
           </ul>
         </div>
 
-        <div>
+        {/* <div>
           <p className="px-3 pb-2.5 font-display text-[11px] font-bold uppercase tracking-[0.16em] text-slate-600">
             System & Tools
           </p>
@@ -127,7 +142,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
               );
             })}
           </ul>
-        </div>
+        </div> */}
 
         {/* AI Model Badge Card */}
         <div className="rounded-2xl border border-blue-100 bg-linear-to-br from-blue-50/70 via-indigo-50/50 to-white p-4 shadow-2xs">

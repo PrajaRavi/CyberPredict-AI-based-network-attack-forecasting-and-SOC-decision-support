@@ -14,6 +14,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "../../lib/utils";
+import { useAlerts } from "../../context/AlertContext";
 
 interface HeaderProps {
   onMenu: () => void;
@@ -26,6 +27,7 @@ const PROFILE_ITEMS = [
 ];
 
 export function Header({ onMenu }: HeaderProps) {
+  const { hasCriticalOrHigh, criticalCount, highCount, totalCount } = useAlerts();
   /* 1s clock tick */
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
@@ -163,14 +165,27 @@ export function Header({ onMenu }: HeaderProps) {
           />
         </button>
 
-        {/* Notification Bell (Matches reference image) */}
+        {/* Notification Bell */}
         <Link
           to="/alerts"
-          aria-label="12 active alerts"
-          className="relative grid size-9 sm:size-10 place-items-center rounded-full border border-slate-200/80 bg-white text-slate-600 shadow-2xs hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer active:scale-95"
+          aria-label={`${totalCount} alerts, ${criticalCount + highCount} high severity`}
+          className={cn(
+            "relative grid size-9 sm:size-10 place-items-center rounded-full border transition-all cursor-pointer active:scale-95 shadow-2xs",
+            hasCriticalOrHigh
+              ? "border-rose-400 bg-rose-50 text-rose-600 hover:bg-rose-100 ring-2 ring-rose-400/30"
+              : "border-slate-200/80 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+          )}
         >
-          <Bell size={16} />
-          <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 size-2 rounded-full bg-rose-500 ring-2 ring-white" />
+          <Bell size={16} className={cn(hasCriticalOrHigh && "animate-pulse text-rose-600")} />
+          {hasCriticalOrHigh ? (
+            <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-rose-600 font-mono text-[9.5px] font-bold text-white shadow-xs">
+              {criticalCount + highCount}
+            </span>
+          ) : (
+            totalCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 size-2 rounded-full bg-slate-300 ring-2 ring-white" />
+            )
+          )}
         </Link>
 
         {/* Profile Pill Dropdown */}

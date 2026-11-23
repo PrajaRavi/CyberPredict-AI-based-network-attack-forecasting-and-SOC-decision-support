@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
+import { GlobalThreatBanner } from "./GlobalThreatBanner";
+import { useAlerts } from "../../context/AlertContext";
 
 /**
  * DashboardLayout — fully responsive application frame:
@@ -12,6 +14,7 @@ export function DashboardLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const { pathname } = useLocation();
   const mainRef = useRef<HTMLElement | null>(null);
+  const { hasCriticalOrHigh, criticalCount } = useAlerts();
 
   /* Reset scroll + close the mobile drawer on route change. */
   useEffect(() => {
@@ -44,6 +47,9 @@ export function DashboardLayout() {
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header onMenu={() => setMobileNavOpen(true)} />
 
+        {/* Global Warning Banner across whole dashboard when Critical/High Alert exists */}
+        <GlobalThreatBanner />
+
         <main ref={mainRef} className="relative flex-1 overflow-y-auto overflow-x-hidden">
           {/* Ambient subtle backdrops */}
           <div
@@ -64,10 +70,17 @@ export function DashboardLayout() {
                 <span className="hidden sm:inline">AI-Driven Attack Forecasting</span>
               </div>
               <div className="flex items-center gap-3 text-[11px] font-mono">
-                <span className="text-emerald-700 font-semibold flex items-center gap-1.5">
-                  <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Telemetry Nominal
-                </span>
+                {hasCriticalOrHigh ? (
+                  <span className="text-rose-600 font-bold flex items-center gap-1.5 animate-pulse">
+                    <span className="size-2 rounded-full bg-rose-600 ring-2 ring-rose-300" />
+                    {criticalCount > 0 ? "Critical Threat Active" : "High Severity Alert Active"}
+                  </span>
+                ) : (
+                  <span className="text-emerald-700 font-semibold flex items-center gap-1.5">
+                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Telemetry Nominal
+                  </span>
+                )}
                 <span className="text-slate-600">v2.4.1</span>
               </div>
             </footer>

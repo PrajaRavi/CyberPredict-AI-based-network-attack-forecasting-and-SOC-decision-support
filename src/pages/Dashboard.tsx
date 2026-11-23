@@ -1,4 +1,6 @@
-import { Info, LayoutDashboard, Radar } from "lucide-react";
+import { ArrowRight, Info, LayoutDashboard, Radar, ShieldAlert } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useAlerts } from "../context/AlertContext";
 import { ActivityDonutCard } from "../components/dashboard/ActivityDonutCard";
 import { ConfidenceCard } from "../components/dashboard/ConfidenceCard";
 import { DefenseGoalsCard } from "../components/dashboard/DefenseGoalsCard";
@@ -98,6 +100,8 @@ export function AiForecastCard() {
 }
 
 export default function DashboardPage() {
+  const { hasCriticalOrHigh, criticalCount, highCount } = useAlerts();
+
   return (
     <div className="space-y-5 sm:space-y-6">
       {/* Page Header */}
@@ -108,13 +112,46 @@ export default function DashboardPage() {
         description="Live threat posture, predictive attack horizon and prioritized analyst guidance on a single pane of glass."
         aside={
           <div className="flex flex-wrap items-center gap-2">
-            <RiskLevelBadge level={riskScore.level} />
-            <StatusBadge tone="safe" pulse>
-              Live Telemetry Feed
+            <RiskLevelBadge level={hasCriticalOrHigh ? "CRITICAL" : riskScore.level} />
+            <StatusBadge tone={hasCriticalOrHigh ? "crit" : "safe"} pulse>
+              {hasCriticalOrHigh ? "High Threat Active" : "Live Telemetry Feed"}
             </StatusBadge>
           </div>
         }
       />
+
+      {/* Critical Threat Alert Box (Active when Critical/High Alert Exists) */}
+      {hasCriticalOrHigh && (
+        <div className="relative overflow-hidden rounded-2xl border border-rose-300 bg-linear-to-r from-rose-50 via-red-50 to-orange-50 p-4 sm:p-5 shadow-xs">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-rose-600 text-white shadow-md shadow-rose-600/30">
+                <ShieldAlert size={20} className="animate-pulse" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-display text-sm sm:text-base font-bold text-rose-950">
+                    CRITICAL THREAT ACTIVE — {criticalCount} Critical Alert{criticalCount > 1 ? "s" : ""} In Queue
+                  </span>
+                  <span className="rounded-full bg-rose-600 px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase text-white animate-pulse">
+                    Action Required
+                  </span>
+                </div>
+                <p className="mt-1 text-xs sm:text-sm text-rose-800/90">
+                  Model forecasting indicates high attack likelihood. Review triage recommendations in the Alerts queue.
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/alerts"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 font-display text-xs font-bold text-white shadow-xs hover:bg-rose-700 transition-colors"
+            >
+              <span>Inspect Incident Queue</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Top 4 Hero Metric Cards (Exact match to the 4 gradient cards in reference image!) */}
       <section aria-label="Key indicators" className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
