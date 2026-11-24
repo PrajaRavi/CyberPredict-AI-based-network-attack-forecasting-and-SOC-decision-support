@@ -1,7 +1,3 @@
-import {
-  BookOpen,
-  Settings,
-} from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { NAV_ITEMS } from "../../data/navigation";
 import { cn } from "../../lib/utils";
@@ -64,33 +60,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
         </ul>
       </nav>
 
-      {/* Sidebar Footer — Settings, Help, System Status */}
-      <div className="shrink-0 border-t border-slate-100 p-3.5 space-y-1">
-        <button
-          type="button"
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[12.5px] font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors cursor-pointer"
-        >
-          <Settings size={16} className="text-slate-400" />
-          <span>Settings</span>
-        </button>
-
-        <button
-          type="button"
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[12.5px] font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors cursor-pointer"
-        >
-          <BookOpen size={16} className="text-slate-400" />
-          <span>Help & Documentation</span>
-        </button>
-
-        {/* System Status */}
-        <div className="pt-2 px-3 pb-1 flex items-center justify-between text-[11.5px]">
-          <span className="text-slate-500 font-medium">System Status</span>
-          <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-600">
-            <span className="size-2 rounded-full bg-emerald-500" />
-            Operational
-          </span>
-        </div>
-      </div>
+      
     </aside>
   );
 }
