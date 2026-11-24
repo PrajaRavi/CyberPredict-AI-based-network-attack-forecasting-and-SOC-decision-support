@@ -1,6 +1,7 @@
 import {
   Bell,
-  Info,
+  // Info,
+  LogOut,
   Menu,
   Search,
   X,
@@ -8,6 +9,7 @@ import {
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { MODULES } from "../../data/modules";
+import { useAlerts } from "../../context/AlertContext";
 
 interface HeaderProps {
   onMenu: () => void;
@@ -16,9 +18,12 @@ interface HeaderProps {
 export function Header({ onMenu }: HeaderProps) {
   const location = useLocation();
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
+  const { hasCriticalOrHigh, criticalCount, totalCount } = useAlerts();
 
   // Match current active module meta
   const currentPath = location.pathname;
+  const isInvestigation = currentPath === "/investigation";
   const currentModule =
     Object.values(MODULES).find(
       (m) =>
@@ -53,73 +58,108 @@ export function Header({ onMenu }: HeaderProps) {
 
       {/* Right: Search, Notification Bell, DEMO MODE chip, User Avatar */}
       <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0 ml-auto">
-        {/* Search Input — Pill container */}
-        <div className="relative">
-          <div className="hidden sm:block relative w-44 md:w-56 lg:w-64">
-            <Search
-              size={14}
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-            />
-            <input
-              type="text"
-              placeholder={currentModule.searchPlaceholder || "Search across network..."}
-              className="h-9 w-full rounded-full border border-slate-200/80 bg-slate-50/70 pl-9 pr-3 text-xs font-medium text-slate-800 placeholder:text-slate-400 transition-all focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 focus:outline-none"
-            />
+        {/* Search Input — Pill container (hidden on /investigation per user request) */}
+        {!isInvestigation && (
+          <div className="relative">
+            
+            {/* Mobile search toggle button */}
+            <button
+              type="button"
+              onClick={() => setMobileSearchOpen((v) => !v)}
+              aria-label="Toggle search"
+              className="sm:hidden grid size-9 place-items-center rounded-full border border-slate-200/80 bg-white text-slate-600 shadow-xs active:scale-95 cursor-pointer"
+            >
+              {mobileSearchOpen ? <X size={15} /> : <Search size={15} />}
+            </button>
+
+            
           </div>
-
-          {/* Mobile search toggle button */}
-          <button
-            type="button"
-            onClick={() => setMobileSearchOpen((v) => !v)}
-            aria-label="Toggle search"
-            className="sm:hidden grid size-9 place-items-center rounded-full border border-slate-200/80 bg-white text-slate-600 shadow-xs active:scale-95 cursor-pointer"
-          >
-            {mobileSearchOpen ? <X size={15} /> : <Search size={15} />}
-          </button>
-
-          {mobileSearchOpen && (
-            <div className="absolute right-0 top-11 z-50 w-72 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl sm:hidden">
-              <div className="relative">
-                <Search
-                  size={14}
-                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-                <input
-                  type="text"
-                  autoFocus
-                  placeholder={currentModule.searchPlaceholder}
-                  className="h-9 w-full rounded-full border border-slate-200 bg-slate-50 pl-8 pr-3 text-xs font-medium text-slate-800 focus:bg-white focus:outline-none focus:border-purple-500"
-                />
-              </div>
-            </div>
-          )}
-        </div>
+        )}
 
         {/* Notification Bell with Badge */}
         <Link
           to="/alerts"
-          aria-label="3 notifications"
-          className="relative grid size-9 place-items-center rounded-full border border-slate-200/70 bg-white text-slate-600 hover:bg-slate-50 transition-all cursor-pointer active:scale-95"
+          aria-label={`${criticalCount > 0 ? criticalCount : totalCount} notifications`}
+          className={`relative grid size-9 place-items-center rounded-full border bg-white transition-all cursor-pointer active:scale-95 ${
+            hasCriticalOrHigh
+              ? "border-rose-300 text-rose-600 ring-2 ring-rose-200 animate-pulse"
+              : "border-slate-200/70 text-slate-600 hover:bg-slate-50"
+          }`}
         >
           <Bell size={16} />
-          <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-rose-500 font-mono text-[9px] font-bold text-white shadow-xs">
-            3
+          <span
+            className={`absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full font-mono text-[9px] font-bold text-white shadow-xs ${
+              hasCriticalOrHigh ? "bg-rose-600 animate-bounce" : "bg-purple-600"
+            }`}
+          >
+            {hasCriticalOrHigh ? criticalCount : 3}
           </span>
         </Link>
 
-        {/* DEMO MODE ⓘ Pill Button */}
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#EDE9FE] px-3 py-1.5 text-[11px] font-semibold text-[#7030A0] border border-purple-200/60 transition-colors">
-          <span>DEMO MODE</span>
-          <Info size={13} className="shrink-0" />
-        </div>
+       
+        {/* User Avatar with Profile Popup Menu */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setAvatarMenuOpen((v) => !v)}
+            aria-label="User profile menu"
+            aria-expanded={avatarMenuOpen}
+            className="relative size-8 sm:size-9 rounded-full overflow-hidden ring-2 ring-purple-100 hover:ring-purple-300 transition-all shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7030A0] flex items-center justify-center active:scale-95"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=120"
+              alt="Harsh Purohit"
+              className="size-full object-cover"
+            />
+          </button>
 
-        {/* User Avatar */}
-        <div className="relative size-8 sm:size-9 rounded-full overflow-hidden ring-2 ring-purple-100 shadow-xs cursor-pointer">
-          <img
-            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=120"
-            alt="SOC Analyst"
-            className="size-full object-cover"
-          />
+          {avatarMenuOpen && (
+            <>
+              {/* Backdrop for outside click */}
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setAvatarMenuOpen(false)}
+              />
+
+              {/* Popup Menu */}
+              <div className="absolute right-0 top-11 z-50 w-64 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-xl ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-100">
+                {/* User Info */}
+                <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                  <div className="relative size-10 rounded-full overflow-hidden ring-2 ring-purple-100 shrink-0">
+                    <img
+                      src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=120"
+                      alt="Harsh Purohit"
+                      className="size-full object-cover"
+                    />
+                    <span className="absolute bottom-0 right-0 size-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-slate-900 truncate">John Doe</h4>
+                    <p className="text-[11px] text-slate-500 truncate">johndoe@cyberpredict.io</p>
+                    <span className="inline-block mt-1 text-[9.5px] font-semibold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-md">
+                      Lead SOC Analyst
+                    </span>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAvatarMenuOpen(false);
+                      navigation.navigate("/")
+                      console.log("Logged out");
+                    }}
+                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-rose-600 hover:bg-rose-50/80 transition-colors cursor-pointer group"
+                  >
+                    <LogOut size={14} className="text-rose-500 group-hover:text-rose-600 transition-colors" />
+                    <span>Log Out</span>
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </header>

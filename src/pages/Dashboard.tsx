@@ -21,6 +21,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "../components/ui/card";
+import { useAlerts } from "../context/AlertContext";
 
 // 24-hour timeline data matching Image 5
 const TIMELINE_DATA = [
@@ -49,6 +50,13 @@ const SPARK_DEVIATION_2 = [{ v: 15 }, { v: 22 }, { v: 18 }, { v: 28 }, { v: 25 }
 const SPARK_DEVIATION_3 = [{ v: 18 }, { v: 25 }, { v: 22 }, { v: 33 }, { v: 30 }, { v: 38 }];
 
 export default function DashboardPage() {
+  const { hasCriticalOrHigh, alerts } = useAlerts();
+
+  const riskScore = hasCriticalOrHigh ? 92 : 68;
+  const gaugePercent = riskScore / 100;
+
+  // Top 4 priority alerts from alert context
+  const priorityAlerts = alerts.slice(0, 4);
   return (
     <div className="space-y-5">
       {/* 1. Top Section: Predictive Risk Overview */}
@@ -75,27 +83,31 @@ export default function DashboardPage() {
                     strokeWidth="10"
                     strokeLinecap="round"
                   />
-                  {/* Gauge active arc (68%) */}
+                  {/* Gauge active arc */}
                   <path
                     d="M 10 65 A 50 50 0 0 1 110 65"
                     fill="none"
-                    stroke="url(#purpleGaugeGrad)"
+                    stroke={hasCriticalOrHigh ? "url(#roseGaugeGrad)" : "url(#purpleGaugeGrad)"}
                     strokeWidth="10"
                     strokeLinecap="round"
                     strokeDasharray="157"
-                    strokeDashoffset={157 * (1 - 0.68)}
+                    strokeDashoffset={157 * (1 - gaugePercent)}
                   />
                   <defs>
                     <linearGradient id="purpleGaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%" stopColor="#8B5CF6" />
                       <stop offset="100%" stopColor="#7030A0" />
                     </linearGradient>
+                    <linearGradient id="roseGaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#F43F5E" />
+                      <stop offset="100%" stopColor="#BE123C" />
+                    </linearGradient>
                   </defs>
                 </svg>
 
                 <div className="absolute inset-0 flex flex-col items-center justify-center pt-2">
                   <div className="flex items-baseline gap-0.5">
-                    <span className="text-2xl font-extrabold text-slate-900">68</span>
+                    <span className="text-2xl font-extrabold text-slate-900">{riskScore}</span>
                     <span className="text-xs font-semibold text-slate-400">/ 100</span>
                   </div>
                   <span className="text-[10.5px] font-medium text-slate-500">Current Risk Score</span>
@@ -106,13 +118,19 @@ export default function DashboardPage() {
               <div className="space-y-2">
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-100">
                   <ArrowUpRight size={13} />
-                  <span>+12%</span>
+                  <span>{hasCriticalOrHigh ? "+28%" : "+12%"}</span>
                   <span className="text-slate-400 font-normal">vs. prev hour</span>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-600 border border-rose-200/50">
+                <div
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold border ${
+                    hasCriticalOrHigh
+                      ? "bg-rose-100 text-rose-700 border-rose-300 animate-pulse"
+                      : "bg-rose-50 text-rose-600 border-rose-200/50"
+                  }`}
+                >
                   <AlertTriangle size={12} />
-                  <span>Elevated Risk</span>
+                  <span>{hasCriticalOrHigh ? "Critical Risk Spike" : "Elevated Risk"}</span>
                 </div>
               </div>
             </div>
@@ -428,81 +446,52 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50 text-slate-700">
-                <tr className="hover:bg-slate-50/60 transition-colors">
-                  <td className="py-2.5 font-medium flex items-center gap-1.5">
-                    <span className="size-1.5 rounded-full bg-rose-500" />
-                    Anomalous Traffic
-                  </td>
-                  <td className="py-2.5">
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-600">
-                      Critical
-                    </span>
-                  </td>
-                  <td className="py-2.5 text-slate-500 font-mono">17:42</td>
-                  <td className="py-2.5 font-mono text-slate-600">WS-1047</td>
-                  <td className="py-2.5 text-right">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-50 text-[#7030A0]">
-                      Investigating
-                    </span>
-                  </td>
-                </tr>
-
-                <tr className="hover:bg-slate-50/60 transition-colors">
-                  <td className="py-2.5 font-medium flex items-center gap-1.5">
-                    <span className="size-1.5 rounded-full bg-amber-500" />
-                    Suspicious Login
-                  </td>
-                  <td className="py-2.5">
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-600">
-                      Warning
-                    </span>
-                  </td>
-                  <td className="py-2.5 text-slate-500 font-mono">17:40</td>
-                  <td className="py-2.5 font-mono text-slate-600">SRV-2213</td>
-                  <td className="py-2.5 text-right">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-50 text-[#7030A0]">
-                      Open
-                    </span>
-                  </td>
-                </tr>
-
-                <tr className="hover:bg-slate-50/60 transition-colors">
-                  <td className="py-2.5 font-medium flex items-center gap-1.5">
-                    <span className="size-1.5 rounded-full bg-rose-500" />
-                    Policy Violation
-                  </td>
-                  <td className="py-2.5">
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-600">
-                      Critical
-                    </span>
-                  </td>
-                  <td className="py-2.5 text-slate-500 font-mono">17:36</td>
-                  <td className="py-2.5 font-mono text-slate-600">PC-7789</td>
-                  <td className="py-2.5 text-right">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-50 text-[#7030A0]">
-                      Open
-                    </span>
-                  </td>
-                </tr>
-
-                <tr className="hover:bg-slate-50/60 transition-colors">
-                  <td className="py-2.5 font-medium flex items-center gap-1.5">
-                    <span className="size-1.5 rounded-full bg-amber-500" />
-                    Unusual Connection
-                  </td>
-                  <td className="py-2.5">
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-600">
-                      Warning
-                    </span>
-                  </td>
-                  <td className="py-2.5 text-slate-500 font-mono">17:33</td>
-                  <td className="py-2.5 font-mono text-slate-600">DB-1201</td>
-                  <td className="py-2.5 text-right">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-600">
-                      Resolved
-                    </span>
-                  </td>
-                </tr>
+                {priorityAlerts.map((a) => {
+                  const isCrit = a.severity === "CRITICAL";
+                  const isElev = a.severity === "HIGH";
+                  return (
+                    <tr key={a.id} className="hover:bg-slate-50/60 transition-colors">
+                      <td className="py-2.5 font-medium flex items-center gap-1.5">
+                        <span
+                          className={`size-1.5 rounded-full ${
+                            isCrit ? "bg-rose-500 animate-pulse" : isElev ? "bg-[#7030A0]" : "bg-emerald-500"
+                          }`}
+                        />
+                        <Link to="/alerts" className="hover:text-[#7030A0] transition-colors truncate max-w-[120px]">
+                          {a.title || a.vector}
+                        </Link>
+                      </td>
+                      <td className="py-2.5">
+                        <span
+                          className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                            isCrit
+                              ? "bg-rose-50 text-rose-600"
+                              : isElev
+                              ? "bg-purple-50 text-[#7030A0]"
+                              : "bg-emerald-50 text-emerald-600"
+                          }`}
+                        >
+                          {a.severity}
+                        </span>
+                      </td>
+                      <td className="py-2.5 text-slate-500 font-mono">{a.timestamp}</td>
+                      <td className="py-2.5 font-mono text-slate-600">{a.source || a.target}</td>
+                      <td className="py-2.5 text-right">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                            a.status === "Open"
+                              ? "bg-purple-50 text-[#7030A0]"
+                              : a.status === "Investigating"
+                              ? "bg-blue-50 text-blue-700"
+                              : "bg-emerald-50 text-emerald-600"
+                          }`}
+                        >
+                          {a.status}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
