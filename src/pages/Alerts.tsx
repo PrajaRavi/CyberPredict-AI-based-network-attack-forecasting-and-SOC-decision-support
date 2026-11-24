@@ -1,4 +1,4 @@
-import { AlertTriangle, BellRing, CheckCircle2, Radar, RotateCcw, ShieldAlert, Zap } from "lucide-react";
+import { BellRing, CheckCircle2, Radar, RotateCcw, ShieldAlert, Zap } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AlertCard, type AlertSeverity } from "../components/alerts/AlertCard";
 import { StatusBadge } from "../components/ui/Badge";
@@ -68,7 +68,6 @@ export default function AlertsPage() {
   const handleActivate = () => {
     const newAlert = activateCriticalAlert();
     setLastActivatedId(newAlert.id);
-    // If user was on LOW or MEDIUM filter, switch to ALL so the critical alert is immediately visible
     if (filter === "LOW" || filter === "MEDIUM") {
       setFilter("ALL");
     }
@@ -105,7 +104,7 @@ export default function AlertsPage() {
               <button
                 type="button"
                 onClick={handleReset}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 font-sans text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 hover:text-slate-900 transition-colors cursor-pointer active:scale-95"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 font-sans text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 hover:text-slate-900 transition-colors cursor-pointer active:scale-95"
                 title="Reset alert queue to initial low/medium baseline"
               >
                 <RotateCcw size={13} />
@@ -192,7 +191,7 @@ export default function AlertsPage() {
               onClick={() => setFilter(sev)}
               aria-pressed={active}
               className={cn(
-                "inline-flex h-9 items-center gap-2 rounded-full border px-3.5 font-sans text-xs font-bold transition-all duration-150 cursor-pointer shadow-2xs",
+                "inline-flex h-9 items-center gap-2 rounded-full border px-3.5 font-sans text-xs font-bold transition-all duration-150 cursor-pointer shadow-xs",
                 active
                   ? meta.activeClass
                   : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"

@@ -1,6 +1,5 @@
 /**
- * Sidebar navigation — derived from the module registry so nav,
- * routing and page metadata never drift apart.
+ * Sidebar navigation — derived from the module registry.
  */
 import type { LucideIcon } from "lucide-react";
 import { MODULE_LIST, type ModuleId } from "./modules";
@@ -19,15 +18,10 @@ export interface NavItem {
   badge?: NavBadge;
 }
 
-const BADGES: Partial<Record<ModuleId, NavBadge>> = {
-  alerts: { label: "12", tone: "crit" },
-};
-
 export const NAV_ITEMS: NavItem[] = MODULE_LIST.map((m) => ({
   id: m.id,
   path: m.path,
   label: m.title,
   code: m.code,
   icon: m.icon,
-  badge: BADGES[m.id],
 }));

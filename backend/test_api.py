@@ -24,6 +24,8 @@ def test_endpoints():
         "/api/v1/forecast/window",
         "/api/v1/risk/analysis",
         "/api/v1/alerts",
+        "/api/v1/alerts/activate",
+        "/api/v1/alerts/reset",
         "/api/v1/alerts/{alert_id}/acknowledge",
         "/api/v1/models/metrics",
         "/api/v1/simulation/what-if"
@@ -62,10 +64,27 @@ def test_endpoints():
     sim_res = mock_engine.simulate_what_if(sim_req)
     print(f"  [PASS] What-If simulation: score={sim_res.simulatedRiskScore}, level={sim_res.simulatedRiskLevel}")
 
+    # Test initial alerts (should be only LOW and MEDIUM)
+    initial_alerts = mock_engine.get_alerts()
+    severities = {a.severity for a in initial_alerts}
+    assert "CRITICAL" not in severities and "HIGH" not in severities, f"Initial alerts contain critical/high: {severities}"
+    print(f"  [PASS] Initial alerts contains only: {severities} (count={len(initial_alerts)})")
+
+    # Test activating critical alert
+    new_crit = mock_engine.activate_critical_alert()
+    assert new_crit.severity == "CRITICAL"
+    print(f"  [PASS] Activate critical alert: {new_crit.id} ({new_crit.vector})")
+
     # Test alert acknowledge
-    ack_res = mock_engine.acknowledge_alert("ALR-7041", True)
+    ack_res = mock_engine.acknowledge_alert(new_crit.id, True)
     assert ack_res is not None and ack_res.acknowledged is True
     print(f"  [PASS] Alert acknowledgement: {ack_res.id} acknowledged={ack_res.acknowledged}")
+
+    # Test reset
+    reset_list = mock_engine.reset_alerts()
+    reset_sevs = {a.severity for a in reset_list}
+    assert "CRITICAL" not in reset_sevs and "HIGH" not in reset_sevs
+    print(f"  [PASS] Reset alerts back to: {reset_sevs}")
 
     print("\nAll backend logic and route definitions verified successfully!")
 

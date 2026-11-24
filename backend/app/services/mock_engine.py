@@ -468,37 +468,8 @@ class MockInferenceEngine:
     # 5. Alerts Queue & Triage
     # -------------------------------------------------------------------------
     def _init_alerts(self) -> List[Dict[str, Any]]:
+        # Initially contains ONLY 'LOW' and 'MEDIUM' category alerts per specification
         return [
-            {
-                "id": "ALR-7041", "timestamp": "14:02:31", "severity": "CRITICAL", "vector": "DDoS forecast",
-                "message": "Forecast model projects DDoS-pattern activity peaking within the next 10–15 minutes (87% likelihood).",
-                "recommendedAction": "Stage the DDoS mitigation playbook and pre-position rate limits for affected endpoints; execution requires SOC lead approval.",
-                "source": "172.16.88.0/24 cluster", "target": "10.0.4.12 (edge-01)", "acknowledged": False
-            },
-            {
-                "id": "ALR-7040", "timestamp": "14:01:58", "severity": "HIGH", "vector": "DDoS pattern",
-                "message": "Potential DDoS risk detected due to abnormal packet rate.",
-                "recommendedAction": "Investigate high-volume source traffic and review affected endpoints.",
-                "source": "172.16.88.41", "target": "10.0.4.12:443", "acknowledged": False
-            },
-            {
-                "id": "ALR-7039", "timestamp": "14:00:47", "severity": "HIGH", "vector": "Flood",
-                "message": "Synchronized connection bursts detected from a clustered low-reputation source group.",
-                "recommendedAction": "Correlate source ASN history and prepare connection-rate thresholds for review.",
-                "source": "172.16.88.0/24 cluster", "target": "10.0.4.0/24 services", "acknowledged": False
-            },
-            {
-                "id": "ALR-7038", "timestamp": "13:58:12", "severity": "HIGH", "vector": "Volume",
-                "message": "Ingress byte rate exceeded the seasonal envelope by 212% on edge interfaces.",
-                "recommendedAction": "Compare ingress/egress asymmetry and validate upstream scrubbing options.",
-                "source": "edge-01", "target": "core-sw-02", "acknowledged": False
-            },
-            {
-                "id": "ALR-7037", "timestamp": "13:55:36", "severity": "HIGH", "vector": "Risk index",
-                "message": "Composite risk score crossed the elevated threshold (87 > 75) and is still rising.",
-                "recommendedAction": "Escalate to tier-3 review and re-check forecast assumptions before the risk window opens.",
-                "source": "Platform (SOC-01)", "target": "Overview dashboard", "acknowledged": False
-            },
             {
                 "id": "ALR-7036", "timestamp": "13:49:05", "severity": "MEDIUM", "vector": "Scan",
                 "message": "Port-scan-like probing observed across monitored subnets from a single internal host.",
@@ -532,6 +503,29 @@ class MockInferenceEngine:
         ]
 
     def get_alerts(self) -> List[AlertItem]:
+        return [AlertItem(**a) for a in self._alerts_db]
+
+    def activate_critical_alert(self) -> AlertItem:
+        """Inject a high-priority critical alert into the backend alert queue."""
+        new_id = f"ALR-CRIT-{random.randint(1000, 9999)}"
+        timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%H:%M:%S UTC")
+        alert_data = {
+            "id": new_id,
+            "timestamp": timestamp,
+            "severity": "CRITICAL",
+            "vector": "DDoS forecast",
+            "message": "CRITICAL THREAT: Neural forecast projects volumetric DDoS pattern surge peaking within next 10–15 min (96% likelihood).",
+            "recommendedAction": "Deploy edge DDoS scrubbing playbook and pre-position rate limits on edge-01; alert tier-3 SOC lead.",
+            "source": "172.16.88.0/24 cluster",
+            "target": "10.0.4.12:443 (edge-01)",
+            "acknowledged": False
+        }
+        self._alerts_db.insert(0, alert_data)
+        return AlertItem(**alert_data)
+
+    def reset_alerts(self) -> List[AlertItem]:
+        """Reset alerts back to initial baseline containing only LOW and MEDIUM alerts."""
+        self._alerts_db = self._init_alerts()
         return [AlertItem(**a) for a in self._alerts_db]
 
     def acknowledge_alert(self, alert_id: str, acknowledged: bool = True) -> Optional[AlertItem]:

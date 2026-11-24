@@ -1,11 +1,16 @@
-import { AlertTriangle, ArrowRight, ShieldAlert, X } from "lucide-react";
+import { ArrowRight, CheckCircle2, ShieldAlert, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAlerts } from "../../context/AlertContext";
-import { cn } from "../../lib/utils";
 
 export function GlobalThreatBanner() {
-  const { hasCriticalOrHigh, criticalCount, highCount, isBannerDismissed, dismissBanner } =
-    useAlerts();
+  const {
+    hasCriticalOrHigh,
+    criticalCount,
+    highCount,
+    isBannerDismissed,
+    dismissBanner,
+    solveAllThreats,
+  } = useAlerts();
   const location = useLocation();
 
   if (!hasCriticalOrHigh || isBannerDismissed) {
@@ -18,7 +23,7 @@ export function GlobalThreatBanner() {
     <div
       role="alert"
       aria-live="assertive"
-      className="relative z-40 w-full overflow-hidden border-b border-rose-500/40 bg-linear-to-r from-rose-950 via-rose-900 to-red-950 px-3.5 py-2.5 sm:px-6 sm:py-3 text-white shadow-lg shadow-rose-950/30"
+      className="sticky top-0 z-50 w-full overflow-hidden border-b-2 border-rose-500/80 bg-linear-to-r from-rose-950 via-rose-900 to-red-950 px-3.5 py-3 sm:px-6 text-white shadow-xl shadow-rose-950/40"
     >
       {/* Background ambient pulse glow */}
       <div
@@ -40,29 +45,40 @@ export function GlobalThreatBanner() {
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-md bg-rose-500/30 px-2 py-0.5 font-mono text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-rose-200 border border-rose-400/30">
-                CRITICAL THREAT ALERT
+                CRITICAL THREAT ACTIVE
               </span>
               <span className="font-display text-xs sm:text-sm font-bold tracking-tight text-white">
-                Active High-Severity Security Incident Detected
+                Dashboard Warning: High-Severity Incident Injected
               </span>
             </div>
             <p className="mt-0.5 text-[11px] sm:text-xs text-rose-200/90 truncate">
               {criticalCount > 0 && `${criticalCount} Critical `}
               {criticalCount > 0 && highCount > 0 && "& "}
               {highCount > 0 && `${highCount} High `}
-              priority incident{criticalCount + highCount > 1 ? "s" : ""} requiring immediate SOC analyst review.
+              priority incident requiring immediate resolution. Click "Solve Threat" to restore nominal baseline.
             </p>
           </div>
         </div>
 
-        {/* Right: Action button & Dismiss */}
+        {/* Right: Actions */}
         <div className="flex items-center gap-2 shrink-0">
+          {/* Quick Solve Action Button */}
+          <button
+            type="button"
+            onClick={solveAllThreats}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 sm:px-3.5 py-1.5 font-sans text-xs font-bold text-white shadow-sm hover:bg-emerald-500 transition-all cursor-pointer active:scale-95"
+            title="Mark all critical threats as resolved and clear warning"
+          >
+            <CheckCircle2 size={14} />
+            <span>Solve Threat</span>
+          </button>
+
           {!isAlertsPage && (
             <Link
               to="/alerts"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3 sm:px-3.5 py-1.5 font-sans text-xs font-bold text-rose-900 shadow-xs hover:bg-rose-50 transition-colors cursor-pointer active:scale-95 whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white/95 px-3 sm:px-3.5 py-1.5 font-sans text-xs font-bold text-rose-900 shadow-xs hover:bg-white transition-colors cursor-pointer active:scale-95 whitespace-nowrap"
             >
-              <span>View Alert Queue</span>
+              <span>View Alerts Queue</span>
               <ArrowRight size={13} />
             </Link>
           )}

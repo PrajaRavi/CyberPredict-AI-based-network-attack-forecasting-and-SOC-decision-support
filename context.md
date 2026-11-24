@@ -174,16 +174,23 @@ cyberpredict-frontend-foundation/
 
 ---
 
-## 5. Modules & Navigation Routes
+## 5. Modules & Navigation Routes (9 Core Screens)
+
+The dashboard provides 9 dedicated operational modules designed in accordance with the design specification:
 
 | Route | Module Code | Title | Core Features |
 |---|---|---|---|
-| `/dashboard` | `SOC-01` | **Overview** | 4 Hero gradient cards, Risk Timeline area chart, Activity donut chart, Recent Incidents table, Defense Goals, Contributing factors, Analyst recommendation. |
-| `/traffic` | `NET-02` | **Network Traffic** | Summary KPI tiles, protocol filter chips (`ALL`, `TCP`, `UDP`, `ICMP`), risk dropdown, search bar, sortable NetFlow table, expandable row detail drawer with anomaly indicators. |
-| `/risk-analysis` | `RSK-03` | **Risk Analysis** | 6 live snapshot behaviour tiles (`pps`, `byte rate`, `active flows`, `conn rate`, `duration`, `anomaly score`), trailing trend charts, risk factors, detailed 120m timeline + 30m horizon, expected risk window breakdown. |
-| `/forecast` | `FCST-04` | **Forecast** | Forecast summary tiles, Attack probability horizon chart with confidence band, prediction and confidence cards, risk timeline, What-If simulation sandbox. |
-| `/alerts` | `ALR-05` | **Alerts** | Severity filter pills (`ALL`, `CRITICAL`, `HIGH`, `MEDIUM`, `LOW`) with real-time counters, incident cards with severity accents, route badges, and analyst acknowledgement toggles. |
-| `/model-performance` | `MLO-06` | **Model Performance** | Forecast lead-time hero track diagram, headline metric cards (`Accuracy`, `Precision`, `Recall`, `F1`, `FAR`), grouped comparison bars, version trend lines, confusion matrix. |
+| `/dashboard` | `SOC-01` | **Command Center** | Predictive Risk Overview (semi-circle gauge + 24h spline timeline with Now marker), 4 metric cards with mini sparklines, Behaviour Intelligence deviations, Priority Alerts table, and Intelligence Insight card. |
+| `/monitoring` | `NET-02` | **Live Monitoring** | Dual-line incoming/outgoing area chart with time range pills, peak callout, 4 metric cards with sparklines, Network Event Stream live table, Monitoring History, and Simulated Source Status bar with Pause Simulation. |
+| `/observatory` | `OBS-03` | **Network Observatory** | Interactive SVG Network Topology map, Endpoint Inspector drawer with protocol/traffic stats, 4 KPI cards, Traffic Volume Timeline, Protocol Distribution donut chart, Traffic Intensity bar chart, and NetFlow Explorer table. |
+| `/behaviour` | `BEH-04` | **Behaviour Intelligence** | 5 top KPI snapshot tiles with sparklines, Network Behaviour Analysis area chart with 2 red deviation spikes, Risk Contribution progress bars, Behavioural Deviations table, Historical Comparison grouped bars, and Why Is Network Risk Changing insight box. |
+| `/forecast` | `FCST-05` | **Threat Forecast** | Historical Observations vs Future Forecast horizon curve (T1 to T20) with dashed Forecast Start boundary at T11 and shaded High Risk Window bands, Forecasted Risk Windows table, factor progress bars, and Future Interval Inspector. |
+| `/investigation` | `INV-06` | **Threat Investigation** | 4 stat cards, Investigation Queue table, and full detail pane with Investigation Summary, Endpoint Relationship flow, Evidence Timeline, Traffic Evidence table, and Analyst Workspace with notes and review actions. |
+| `/alerts` | `ALR-07` | **Alerts & Response** | 4 KPI cards, filter pills queue (`All`, `Critical`, `Elevated`, `Informational`, `Open`, `Acknowledged`, `Resolved`), Alert Details drawer with indicators, Response Workflow step pipeline, and Recent Alert Activity feed. |
+| `/simulator` | `SIM-08` | **Scenario Simulator** | 5 scenario preset buttons, interactive traffic control sliders, baseline vs modified risk score comparison gauge (+36 difference), side-by-side comparative behavior charts with threat surge fill, and scenario summary card. |
+| `/research` | `RES-09` | **Research & Validation** | Research overview and badges, CSE-CIC-IDS2018 Dataset Explorer, 7-step Data Processing Pipeline, Temporal Forecasting Framework (15 lookback vs 10 horizon timeline), Model Evaluation benchmarks grid, Research Scope & Limitations, and 3 research pillars. |
+
+*(Legacy route aliases `/traffic`, `/risk-analysis`, and `/model-performance` automatically redirect to `/monitoring`, `/behaviour`, and `/research` respectively).*
 
 ---
 
