@@ -27,6 +27,11 @@ export interface AlertItem {
   recommendedAction: string;
   source: string;
   target: string;
+  status?: "Open" | "Acknowledged" | "Resolved" | "Investigating";
+  title?: string;
+  protocol?: string;
+  indicator?: string;
+  deviation?: string;
 }
 
 const SEV: Record<AlertSeverity, { border: string; bar: string; badgeTone: "crit" | "warn" | "safe" }> = {

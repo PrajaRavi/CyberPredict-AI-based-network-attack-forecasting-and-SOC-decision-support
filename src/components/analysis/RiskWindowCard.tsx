@@ -1,4 +1,4 @@
-import { Clock, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { StatusBadge } from "../ui/Badge";
 
@@ -68,7 +68,7 @@ export function RiskWindowCard({ data }: { data: RiskWindowData }) {
                 className={cn(
                   "rounded-xl border p-2.5 transition-colors",
                   seg.inWindow
-                    ? "border-rose-200 bg-rose-50/60 shadow-2xs"
+                    ? "border-rose-200 bg-rose-50/60 shadow-xs"
                     : "border-slate-100 bg-slate-50/60"
                 )}
               >

@@ -10,7 +10,7 @@ const Card = React.forwardRef<
 >(({ className, gradient = "none", reactive = true, ...props }, ref) => {
   const gradientStyles = {
     none: "bg-white border-slate-100/80 shadow-[0_4px_20px_-2px_rgba(23,40,70,0.04)]",
-    surface: "bg-gradient-to-b from-white via-white to-slate-50/60 border-slate-100 shadow-[0_4px_24px_-2px_rgba(112,144,176,0.08)]",
+    surface: "bg-linear-to-b from-white via-white to-slate-50/60 border-slate-100 shadow-[0_4px_24px_-2px_rgba(112,144,176,0.08)]",
     cyan: "bg-linear-to-br from-[#10e5be] via-[#0ccda9] to-[#05b293] text-white border-transparent shadow-[0_12px_28px_-6px_rgba(16,229,190,0.38)]",
     blue: "bg-linear-to-br from-[#68a5fd] via-[#5493f7] to-[#3b7bf6] text-white border-transparent shadow-[0_12px_28px_-6px_rgba(67,121,238,0.38)]",
     pink: "bg-linear-to-br from-[#ff7e95] via-[#fb6380] to-[#e84666] text-white border-transparent shadow-[0_12px_28px_-6px_rgba(251,99,128,0.38)]",
