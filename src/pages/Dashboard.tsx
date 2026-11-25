@@ -126,11 +126,11 @@ export default function DashboardPage() {
                   className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold border ${
                     hasCriticalOrHigh
                       ? "bg-rose-100 text-rose-700 border-rose-300 animate-pulse"
-                      : "bg-rose-50 text-rose-600 border-rose-200/50"
+                      : "bg-orange-50 text-orange-600 border-orange-200/50"
                   }`}
                 >
                   <AlertTriangle size={12} />
-                  <span>{hasCriticalOrHigh ? "Critical Risk Spike" : "Elevated Risk"}</span>
+                  <span>{hasCriticalOrHigh ? "Critical Risk" : "High Risk"}</span>
                 </div>
               </div>
             </div>
@@ -448,13 +448,28 @@ export default function DashboardPage() {
               <tbody className="divide-y divide-slate-50 text-slate-700">
                 {priorityAlerts.map((a) => {
                   const isCrit = a.severity === "CRITICAL";
-                  const isElev = a.severity === "HIGH";
+                  const isHigh = a.severity === "HIGH";
+                  const isMed = a.severity === "MEDIUM";
+                  const displaySev =
+                    a.severity === "CRITICAL"
+                      ? "Critical"
+                      : a.severity === "HIGH"
+                      ? "High"
+                      : a.severity === "MEDIUM"
+                      ? "Medium"
+                      : "Low";
                   return (
                     <tr key={a.id} className="hover:bg-slate-50/60 transition-colors">
                       <td className="py-2.5 font-medium flex items-center gap-1.5">
                         <span
                           className={`size-1.5 rounded-full ${
-                            isCrit ? "bg-rose-500 animate-pulse" : isElev ? "bg-[#7030A0]" : "bg-emerald-500"
+                            isCrit
+                              ? "bg-rose-500 animate-pulse"
+                              : isHigh
+                              ? "bg-orange-500"
+                              : isMed
+                              ? "bg-amber-500"
+                              : "bg-emerald-500"
                           }`}
                         />
                         <Link to="/alerts" className="hover:text-[#7030A0] transition-colors truncate max-w-[120px]">
@@ -466,12 +481,14 @@ export default function DashboardPage() {
                           className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${
                             isCrit
                               ? "bg-rose-50 text-rose-600"
-                              : isElev
-                              ? "bg-purple-50 text-[#7030A0]"
+                              : isHigh
+                              ? "bg-orange-50 text-orange-600"
+                              : isMed
+                              ? "bg-amber-50 text-amber-600"
                               : "bg-emerald-50 text-emerald-600"
                           }`}
                         >
-                          {a.severity}
+                          {displaySev}
                         </span>
                       </td>
                       <td className="py-2.5 text-slate-500 font-mono">{a.timestamp}</td>

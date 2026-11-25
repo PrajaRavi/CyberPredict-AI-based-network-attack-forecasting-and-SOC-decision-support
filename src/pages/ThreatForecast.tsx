@@ -50,7 +50,7 @@ interface ForecastWindow {
   id: string;
   bucket: string;
   inspectorLabel: string;
-  riskLevel: "Critical" | "Elevated" | "Normal";
+  riskLevel: "Critical" | "High" | "Medium" | "Low";
   contributingSignals: string;
   status: "Critical" | "Watch" | "Stable";
   historicalContext: string;
@@ -64,14 +64,14 @@ const FORECAST_WINDOWS: ForecastWindow[] = [
     id: "w1",
     bucket: "T11 – T12",
     inspectorLabel: "T12 (Initial Transition)",
-    riskLevel: "Elevated",
+    riskLevel: "Medium",
     contributingSignals: "Rising Traffic Volume, Increased Connections",
     status: "Watch",
     historicalContext: "Rising traffic and initial connection ramp observed across internal gateways in T9–T10.",
     indicators: [
-      { name: "Traffic Volume", val: "Elevated (+35%)" },
-      { name: "Connection Frequency", val: "Moderate (+28%)" },
-      { name: "Protocol Shift", val: "Slight (+12%)" },
+      { name: "Traffic Volume", val: "Medium (+35%)" },
+      { name: "Connection Frequency", val: "Medium (+28%)" },
+      { name: "Protocol Shift", val: "Low (+12%)" },
     ],
     miniData: [
       { t: "T9", hist: 44, proj: null },
@@ -98,8 +98,8 @@ const FORECAST_WINDOWS: ForecastWindow[] = [
     historicalContext: "Rising traffic and more connections observed in T9–T10. Projected surge in packet transmission rate.",
     indicators: [
       { name: "Packet Rate", val: "High (+85%)" },
-      { name: "Traffic Volume", val: "Elevated (+65%)" },
-      { name: "Protocol Shift", val: "Notable (+52%)" },
+      { name: "Traffic Volume", val: "High (+65%)" },
+      { name: "Protocol Shift", val: "Medium (+52%)" },
     ],
     miniData: [
       { t: "T8", hist: 46, proj: null },
@@ -120,14 +120,14 @@ const FORECAST_WINDOWS: ForecastWindow[] = [
     id: "w3",
     bucket: "T16 – T17",
     inspectorLabel: "T16 (Post-Surge Dispersion)",
-    riskLevel: "Elevated",
-    contributingSignals: "Elevated Flow Duration, More Sessions",
+    riskLevel: "High",
+    contributingSignals: "High Flow Duration, More Sessions",
     status: "Watch",
     historicalContext: "Sessions linger with extended connection hold times following previous packet velocity spike.",
     indicators: [
-      { name: "Average Flow Duration", val: "Elevated (+42%)" },
+      { name: "Average Flow Duration", val: "High (+42%)" },
       { name: "Concurrent Sessions", val: "High (+50%)" },
-      { name: "Packet Rate", val: "Moderate (+25%)" },
+      { name: "Packet Rate", val: "Medium (+25%)" },
     ],
     miniData: [
       { t: "T14", hist: null, proj: 52 },
@@ -153,9 +153,9 @@ const FORECAST_WINDOWS: ForecastWindow[] = [
     status: "Critical",
     historicalContext: "Recurrent coordinated request spike indicating multi-stage attack payload delivery window.",
     indicators: [
-      { name: "Packet Rate", val: "Critical Peak (+95%)" },
-      { name: "Traffic Volume", val: "Surge (+88%)" },
-      { name: "Protocol Shift", val: "Severe (+74%)" },
+      { name: "Packet Rate", val: "Critical (+95%)" },
+      { name: "Traffic Volume", val: "Critical (+88%)" },
+      { name: "Protocol Shift", val: "High (+74%)" },
     ],
     miniData: [
       { t: "T16", hist: null, proj: 62 },
@@ -176,14 +176,14 @@ const FORECAST_WINDOWS: ForecastWindow[] = [
     id: "w5",
     bucket: "T20",
     inspectorLabel: "T20 (Stabilisation Boundary)",
-    riskLevel: "Normal",
+    riskLevel: "Low",
     contributingSignals: "Stabilising Traffic",
     status: "Stable",
     historicalContext: "Projected traffic normalization as synthetic attack patterns dissolve back to baseline levels.",
     indicators: [
-      { name: "Packet Rate", val: "Normal (+4%)" },
-      { name: "Traffic Volume", val: "Baseline (+2%)" },
-      { name: "Protocol Shift", val: "Expected (-1%)" },
+      { name: "Packet Rate", val: "Low (+4%)" },
+      { name: "Traffic Volume", val: "Low (+2%)" },
+      { name: "Protocol Shift", val: "Low (-1%)" },
     ],
     miniData: [
       { t: "T18", hist: null, proj: 54 },
@@ -369,7 +369,8 @@ export default function ThreatForecastPage() {
                   {FORECAST_WINDOWS.map((win) => {
                     const isSelected = selectedWindow.id === win.id;
                     const isCritical = win.riskLevel === "Critical";
-                    const isElevated = win.riskLevel === "Elevated";
+                    const isHigh = win.riskLevel === "High";
+                    const isMedium = win.riskLevel === "Medium";
 
                     return (
                       <tr
@@ -385,12 +386,24 @@ export default function ThreatForecastPage() {
                         <td className="py-2.5 font-medium">
                           <span
                             className={`inline-flex items-center gap-1 font-semibold ${
-                              isCritical ? "text-rose-600" : isElevated ? "text-purple-700" : "text-emerald-600"
+                              isCritical
+                                ? "text-rose-600"
+                                : isHigh
+                                ? "text-orange-600"
+                                : isMedium
+                                ? "text-amber-600"
+                                : "text-emerald-600"
                             }`}
                           >
                             <span
                               className={`size-1.5 rounded-full ${
-                                isCritical ? "bg-rose-500" : isElevated ? "bg-[#7030A0]" : "bg-emerald-500"
+                                isCritical
+                                  ? "bg-rose-500"
+                                  : isHigh
+                                  ? "bg-orange-500"
+                                  : isMedium
+                                  ? "bg-amber-500"
+                                  : "bg-emerald-500"
                               }`}
                             />
                             {win.riskLevel}
@@ -477,12 +490,14 @@ export default function ThreatForecastPage() {
               className={`my-3 p-2.5 rounded-xl border flex items-center justify-center gap-1.5 text-xs font-bold ${
                 selectedWindow.riskLevel === "Critical"
                   ? "bg-rose-50 border-rose-200/60 text-rose-600"
-                  : selectedWindow.riskLevel === "Elevated"
-                  ? "bg-purple-50 border-purple-200/60 text-purple-700"
+                  : selectedWindow.riskLevel === "High"
+                  ? "bg-orange-50 border-orange-200/60 text-orange-700"
+                  : selectedWindow.riskLevel === "Medium"
+                  ? "bg-amber-50 border-amber-200/60 text-amber-700"
                   : "bg-emerald-50 border-emerald-200/60 text-emerald-700"
               }`}
             >
-              {selectedWindow.riskLevel === "Normal" ? (
+              {selectedWindow.riskLevel === "Low" ? (
                 <CheckCircle2 size={14} />
               ) : (
                 <AlertTriangle size={14} />

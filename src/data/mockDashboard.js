@@ -24,7 +24,7 @@ export const prediction = /** @type {const} */ ({
   attackLabel: "Distributed denial-of-service pattern",
   confidence: 94,
   riskWindow: "Next 10–15 minutes",
-  headline: "Elevated attack risk detected",
+  headline: "High attack risk detected",
   summary:
     "The forecasting model anticipates DDoS-pattern activity within the expected risk window. This is a probabilistic forecast derived from live traffic signals — no attack has been confirmed.",
   disclaimer:
@@ -38,7 +38,7 @@ export const prediction = /** @type {const} */ ({
 
 /** Aggregate forecast status shown in the KPI row. */
 export const forecastStatus = /** @type {const} */ ({
-  status: "Elevated Risk",
+  status: "High Risk",
   tone: "warn",
   window: "Next 10–15 minutes",
   model: "Ensemble v2.4.1",

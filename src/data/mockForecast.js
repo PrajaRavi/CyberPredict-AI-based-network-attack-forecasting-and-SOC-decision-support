@@ -34,8 +34,8 @@ export const forecastSummary = [
   {
     id: "status",
     label: "Forecast status",
-    value: "Elevated Risk",
-    sub: "Above elevated threshold",
+    value: "High Risk",
+    sub: "Above high risk threshold",
     tone: "warn",
   },
   {

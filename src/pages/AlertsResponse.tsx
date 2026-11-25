@@ -102,7 +102,7 @@ const STATS_BY_TIME = {
 
 export interface AlertRecord {
   id: string;
-  severity: "Critical" | "Elevated" | "Informational";
+  severity: "Critical" | "High" | "Medium" | "Low";
   title: string;
   src: string;
   dst: string;
@@ -138,7 +138,7 @@ const INITIAL_ALERTS: AlertRecord[] = [
   },
   {
     id: "ALT-7841",
-    severity: "Elevated",
+    severity: "High",
     title: "Abnormal Traffic Volume",
     src: "10.0.2.18",
     dst: "8.8.8.8",
@@ -155,7 +155,7 @@ const INITIAL_ALERTS: AlertRecord[] = [
   },
   {
     id: "ALT-7840",
-    severity: "Elevated",
+    severity: "Medium",
     title: "High Connection Frequency",
     src: "172.16.4.12",
     dst: "8.8.8.8",
@@ -172,7 +172,7 @@ const INITIAL_ALERTS: AlertRecord[] = [
   },
   {
     id: "ALT-7839",
-    severity: "Informational",
+    severity: "Low",
     title: "Unexpected Protocol Distribution",
     src: "192.168.1.77",
     dst: "8.8.8.8",
@@ -206,7 +206,7 @@ const INITIAL_ALERTS: AlertRecord[] = [
   },
   {
     id: "ALT-7837",
-    severity: "Informational",
+    severity: "Low",
     title: "Collector Queue Telemetry Fluctuation",
     src: "10.99.2.17",
     dst: "10.0.2.53",
@@ -223,7 +223,7 @@ const INITIAL_ALERTS: AlertRecord[] = [
   },
   {
     id: "ALT-7836",
-    severity: "Elevated",
+    severity: "High",
     title: "Repeated SSH Authentication Probes",
     src: "192.168.1.104",
     dst: "10.0.1.9",
@@ -261,7 +261,7 @@ export default function AlertsResponsePage() {
   const [timeDropdownOpen, setTimeDropdownOpen] = useState(false);
 
   // Expandable Severities filter
-  const [selectedSeverity, setSelectedSeverity] = useState<"All Severities" | "Critical" | "Elevated" | "Informational">("All Severities");
+  const [selectedSeverity, setSelectedSeverity] = useState<"All Severities" | "Critical" | "High" | "Medium" | "Low">("All Severities");
   const [severityDropdownOpen, setSeverityDropdownOpen] = useState(false);
 
   // Expandable Statuses filter
@@ -357,8 +357,9 @@ export default function AlertsResponsePage() {
   const filterTabs = [
     "All Alerts",
     "Critical",
-    "Elevated",
-    "Informational",
+    "High",
+    "Medium",
+    "Low",
     "Open",
     "Acknowledged",
     "Resolved",
@@ -392,8 +393,9 @@ export default function AlertsResponsePage() {
       // 3. Tab filter
       let matchesTab = true;
       if (activeTab === "Critical") matchesTab = item.severity === "Critical";
-      else if (activeTab === "Elevated") matchesTab = item.severity === "Elevated";
-      else if (activeTab === "Informational") matchesTab = item.severity === "Informational";
+      else if (activeTab === "High") matchesTab = item.severity === "High";
+      else if (activeTab === "Medium") matchesTab = item.severity === "Medium";
+      else if (activeTab === "Low") matchesTab = item.severity === "Low";
       else if (activeTab === "Open") matchesTab = item.status === "Open";
       else if (activeTab === "Acknowledged") matchesTab = item.status === "Acknowledged";
       else if (activeTab === "Resolved") matchesTab = item.status === "Resolved";
@@ -498,7 +500,7 @@ export default function AlertsResponsePage() {
 
             {severityDropdownOpen && (
               <div className="absolute left-0 top-9 z-30 w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
-                {(["All Severities", "Critical", "Elevated", "Informational"] as const).map((sev) => {
+                {(["All Severities", "Critical", "High", "Medium", "Low"] as const).map((sev) => {
                   const isSel = selectedSeverity === sev;
                   return (
                     <button
@@ -513,8 +515,9 @@ export default function AlertsResponsePage() {
                     >
                       <span className="flex items-center gap-1.5">
                         {sev === "Critical" && <span className="size-1.5 rounded-full bg-rose-500" />}
-                        {sev === "Elevated" && <span className="size-1.5 rounded-full bg-[#7030A0]" />}
-                        {sev === "Informational" && <span className="size-1.5 rounded-full bg-slate-400" />}
+                        {sev === "High" && <span className="size-1.5 rounded-full bg-orange-500" />}
+                        {sev === "Medium" && <span className="size-1.5 rounded-full bg-amber-500" />}
+                        {sev === "Low" && <span className="size-1.5 rounded-full bg-emerald-500" />}
                         {sev}
                       </span>
                       {isSel && <Check size={12} className="text-[#7030A0]" />}
@@ -813,7 +816,8 @@ export default function AlertsResponsePage() {
                   {filteredAlerts.map((alert) => {
                     const isSelected = selectedAlert === alert.id;
                     const isCritical = alert.severity === "Critical";
-                    const isElevated = alert.severity === "Elevated";
+                    const isHigh = alert.severity === "High";
+                    const isMedium = alert.severity === "Medium";
 
                     return (
                       <tr
@@ -829,12 +833,24 @@ export default function AlertsResponsePage() {
                         <td className="py-2.5">
                           <span
                             className={`inline-flex items-center gap-1 font-semibold ${
-                              isCritical ? "text-rose-600" : isElevated ? "text-purple-700" : "text-slate-600"
+                              isCritical
+                                ? "text-rose-600"
+                                : isHigh
+                                ? "text-orange-600"
+                                : isMedium
+                                ? "text-amber-600"
+                                : "text-emerald-600"
                             }`}
                           >
                             <span
                               className={`size-1.5 rounded-full ${
-                                isCritical ? "bg-rose-500 animate-pulse" : isElevated ? "bg-[#7030A0]" : "bg-slate-400"
+                                isCritical
+                                  ? "bg-rose-500 animate-pulse"
+                                  : isHigh
+                                  ? "bg-orange-500"
+                                  : isMedium
+                                  ? "bg-amber-500"
+                                  : "bg-emerald-500"
                               }`}
                             />
                             {alert.severity}
@@ -1110,9 +1126,11 @@ export default function AlertsResponsePage() {
                 className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-bold ${
                   activeAlertDetail.severity === "Critical"
                     ? "bg-rose-100 text-rose-700"
-                    : activeAlertDetail.severity === "Elevated"
-                    ? "bg-purple-100 text-[#7030A0]"
-                    : "bg-slate-100 text-slate-700"
+                    : activeAlertDetail.severity === "High"
+                    ? "bg-orange-100 text-orange-700"
+                    : activeAlertDetail.severity === "Medium"
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-emerald-100 text-emerald-700"
                 }`}
               >
                 {activeAlertDetail.severity}
