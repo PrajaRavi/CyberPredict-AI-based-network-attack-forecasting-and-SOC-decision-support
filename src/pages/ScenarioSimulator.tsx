@@ -145,8 +145,9 @@ export default function ScenarioSimulatorPage() {
 
   const classification = useMemo(() => {
     if (modifiedRisk > 75) return { label: "Critical Risk", color: "text-rose-600 bg-rose-50 border-rose-200" };
-    if (modifiedRisk >= 40) return { label: "Elevated Risk", color: "text-[#7030A0] bg-purple-50 border-purple-200" };
-    return { label: "Normal Risk", color: "text-emerald-700 bg-emerald-50 border-emerald-200" };
+    if (modifiedRisk >= 55) return { label: "High Risk", color: "text-orange-600 bg-orange-50 border-orange-200" };
+    if (modifiedRisk >= 35) return { label: "Medium Risk", color: "text-amber-700 bg-amber-50 border-amber-200" };
+    return { label: "Low Risk", color: "text-emerald-700 bg-emerald-50 border-emerald-200" };
   }, [modifiedRisk]);
 
   // Dynamically scaled modified chart curve
@@ -399,7 +400,7 @@ export default function ScenarioSimulatorPage() {
                 <span className="text-xs text-slate-400 font-medium">Baseline Risk</span>
                 <div className="text-2xl font-extrabold text-slate-800 mt-0.5">28 / 100</div>
                 <span className="inline-flex mt-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">
-                  Normal
+                  Low
                 </span>
               </div>
 
@@ -414,12 +415,14 @@ export default function ScenarioSimulatorPage() {
                   className={`inline-flex mt-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                     modifiedRisk > 75
                       ? "bg-rose-100 text-rose-700"
-                      : modifiedRisk >= 40
-                      ? "bg-purple-100 text-[#7030A0]"
+                      : modifiedRisk >= 55
+                      ? "bg-orange-100 text-orange-700"
+                      : modifiedRisk >= 35
+                      ? "bg-amber-100 text-amber-700"
                       : "bg-emerald-100 text-emerald-700"
                   }`}
                 >
-                  {modifiedRisk > 75 ? "Critical" : modifiedRisk >= 40 ? "Elevated" : "Normal"}
+                  {modifiedRisk > 75 ? "Critical" : modifiedRisk >= 55 ? "High" : modifiedRisk >= 35 ? "Medium" : "Low"}
                 </span>
               </div>
 
@@ -606,7 +609,7 @@ export default function ScenarioSimulatorPage() {
               </div>
               <div className="flex justify-between py-1 border-b border-slate-50">
                 <span className="text-slate-400">Baseline Condition:</span>
-                <span className="font-semibold text-emerald-600">28 / 100 (Normal)</span>
+                <span className="font-semibold text-emerald-600">28 / 100 (Low)</span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-50">
                 <span className="text-slate-400">Parameters Modified:</span>

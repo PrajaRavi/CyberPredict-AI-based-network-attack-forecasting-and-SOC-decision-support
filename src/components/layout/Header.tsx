@@ -1,13 +1,12 @@
 import {
   Bell,
-  // Info,
   LogOut,
   Menu,
   Search,
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { MODULES } from "../../data/modules";
 import { useAlerts } from "../../context/AlertContext";
 
@@ -17,6 +16,7 @@ interface HeaderProps {
 
 export function Header({ onMenu }: HeaderProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
   const { hasCriticalOrHigh, criticalCount, totalCount } = useAlerts();
@@ -148,8 +148,7 @@ export function Header({ onMenu }: HeaderProps) {
                     type="button"
                     onClick={() => {
                       setAvatarMenuOpen(false);
-                      navigation.navigate("/")
-                      console.log("Logged out");
+                      navigate("/");
                     }}
                     className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-rose-600 hover:bg-rose-50/80 transition-colors cursor-pointer group"
                   >

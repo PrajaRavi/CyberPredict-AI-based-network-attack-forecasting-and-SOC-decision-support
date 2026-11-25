@@ -224,7 +224,7 @@ const ALL_EVENTS = [
     dst: "172.16.4.12",
     proto: "UDP",
     desc: "Unusual packet pattern",
-    severity: "Warning",
+    severity: "High",
     status: "Open",
   },
   {
@@ -234,7 +234,7 @@ const ALL_EVENTS = [
     dst: "10.0.1.8",
     proto: "TCP",
     desc: "Suspicious external access",
-    severity: "Warning",
+    severity: "Medium",
     status: "Open",
   },
   {
@@ -244,7 +244,7 @@ const ALL_EVENTS = [
     dst: "192.168.1.20",
     proto: "ICMP",
     desc: "Ping sweep detected",
-    severity: "Info",
+    severity: "Low",
     status: "Resolved",
   },
   {
@@ -254,7 +254,7 @@ const ALL_EVENTS = [
     dst: "10.0.4.15",
     proto: "TCP",
     desc: "Normal traffic pattern",
-    severity: "Info",
+    severity: "Low",
     status: "Resolved",
   },
   {
@@ -274,7 +274,7 @@ const ALL_EVENTS = [
     dst: "192.168.10.5",
     proto: "UDP",
     desc: "DNS query volume deviation",
-    severity: "Warning",
+    severity: "Medium",
     status: "Investigating",
   },
   {
@@ -284,7 +284,7 @@ const ALL_EVENTS = [
     dst: "8.8.8.8",
     proto: "TCP",
     desc: "Outbound TLS session surge",
-    severity: "Info",
+    severity: "Low",
     status: "Resolved",
   },
 ];
@@ -619,7 +619,7 @@ export default function LiveMonitoringPage() {
             <div className="flex flex-wrap items-center gap-2">
               {/* Severity filter buttons */}
               <div className="flex items-center gap-1 bg-slate-100/80 p-0.5 rounded-lg text-xs">
-                {["All", "Critical", "Warning", "Info"].map((sev) => (
+                {["All", "Critical", "High", "Medium", "Low"].map((sev) => (
                   <button
                     key={sev}
                     type="button"
@@ -685,7 +685,9 @@ export default function LiveMonitoringPage() {
                           className={`inline-flex items-center gap-1 font-semibold ${
                             evt.severity === "Critical"
                               ? "text-rose-600"
-                              : evt.severity === "Warning"
+                              : evt.severity === "High"
+                              ? "text-orange-600"
+                              : evt.severity === "Medium"
                               ? "text-amber-600"
                               : "text-emerald-600"
                           }`}
@@ -694,7 +696,9 @@ export default function LiveMonitoringPage() {
                             className={`size-1.5 rounded-full ${
                               evt.severity === "Critical"
                                 ? "bg-rose-600"
-                                : evt.severity === "Warning"
+                                : evt.severity === "High"
+                                ? "bg-orange-500"
+                                : evt.severity === "Medium"
                                 ? "bg-amber-500"
                                 : "bg-emerald-500"
                             }`}

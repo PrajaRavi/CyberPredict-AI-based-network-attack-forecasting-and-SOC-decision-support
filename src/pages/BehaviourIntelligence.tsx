@@ -111,18 +111,18 @@ interface AnomalyRow {
   observed: string;
   baseline: string;
   deviation: string;
-  severity: "Critical" | "Warning" | "Info";
+  severity: "Critical" | "High" | "Medium" | "Low";
   time: string;
 }
 
 const ALL_ANOMALIES: AnomalyRow[] = [
   { id: "AN-7842", indicator: "Connection Freq.", observed: "18.7 k/min", baseline: "12.1 k/min", deviation: "+55%", severity: "Critical", time: "20:42" },
-  { id: "AN-7841", indicator: "Packet Rate", observed: "1.2 k/s", baseline: "860 /s", deviation: "+40%", severity: "Warning", time: "19:37" },
-  { id: "AN-7840", indicator: "Traffic Volume", observed: "42.6 GB", baseline: "34.1 GB", deviation: "+25%", severity: "Warning", time: "18:15" },
+  { id: "AN-7841", indicator: "Packet Rate", observed: "1.2 k/s", baseline: "860 /s", deviation: "+40%", severity: "High", time: "19:37" },
+  { id: "AN-7840", indicator: "Traffic Volume", observed: "42.6 GB", baseline: "34.1 GB", deviation: "+25%", severity: "Medium", time: "18:15" },
   { id: "AN-7839", indicator: "Flow Duration", observed: "14m 12s", baseline: "9m 30s", deviation: "+50%", severity: "Critical", time: "16:50" },
-  { id: "AN-7838", indicator: "Protocol Change", observed: "72% TCP", baseline: "65% TCP", deviation: "+11%", severity: "Info", time: "15:20" },
+  { id: "AN-7838", indicator: "Protocol Change", observed: "72% TCP", baseline: "65% TCP", deviation: "+11%", severity: "Low", time: "15:20" },
   { id: "AN-7837", indicator: "Packet Rate", observed: "1.4 k/s", baseline: "850 /s", deviation: "+65%", severity: "Critical", time: "14:10" },
-  { id: "AN-7836", indicator: "Traffic Volume", observed: "38.2 GB", baseline: "33.0 GB", deviation: "+16%", severity: "Info", time: "12:45" },
+  { id: "AN-7836", indicator: "Traffic Volume", observed: "38.2 GB", baseline: "33.0 GB", deviation: "+16%", severity: "Low", time: "12:45" },
 ];
 
 export default function BehaviourIntelligencePage() {
@@ -580,7 +580,9 @@ export default function BehaviourIntelligencePage() {
                           className={`py-2 font-semibold ${
                             a.severity === "Critical"
                               ? "text-rose-600"
-                              : a.severity === "Warning"
+                              : a.severity === "High"
+                              ? "text-orange-600"
+                              : a.severity === "Medium"
                               ? "text-amber-600"
                               : "text-emerald-600"
                           }`}
@@ -592,7 +594,9 @@ export default function BehaviourIntelligencePage() {
                             className={`inline-flex items-center gap-1 font-semibold ${
                               a.severity === "Critical"
                                 ? "text-rose-600"
-                                : a.severity === "Warning"
+                                : a.severity === "High"
+                                ? "text-orange-600"
+                                : a.severity === "Medium"
                                 ? "text-amber-600"
                                 : "text-emerald-600"
                             }`}
@@ -601,7 +605,9 @@ export default function BehaviourIntelligencePage() {
                               className={`size-1.5 rounded-full ${
                                 a.severity === "Critical"
                                   ? "bg-rose-500"
-                                  : a.severity === "Warning"
+                                  : a.severity === "High"
+                                  ? "bg-orange-500"
+                                  : a.severity === "Medium"
                                   ? "bg-amber-500"
                                   : "bg-emerald-500"
                               }`}

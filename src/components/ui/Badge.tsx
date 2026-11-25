@@ -91,7 +91,7 @@ export function ThreatChip() {
         <span className="relative inline-flex size-2 rounded-full bg-amber-500" />
       </span>
       <span className="font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-amber-700">
-        Threatcon 3 · Elevated
+        Threatcon 3 · High
       </span>
     </div>
   );

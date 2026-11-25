@@ -6,7 +6,7 @@
  * against a stable contract before integration.
  */
 
-export type RiskLevel = "safe" | "elevated" | "high" | "critical";
+export type RiskLevel = "low" | "medium" | "high" | "critical";
 
 export type AttackVector =
   | "ddos"
